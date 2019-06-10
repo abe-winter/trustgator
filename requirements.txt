@@ -1,5 +1,7 @@
-gunicorn
-pugsql
-varyaml
-flask
-bcrypt
+gunicorn==19.9.0
+pugsql==0.1.8
+varyaml==0.0.4
+flask==1.0.3
+bcrypt==3.1.6
+statsd==3.3.0
+redis==3.2.1

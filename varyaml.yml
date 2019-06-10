@@ -1,0 +1,19 @@
+db_args:
+  drivername: postgresql
+  username: $DBUSER
+  password: $DBPASS
+  host: $DBHOST
+redis:
+  sessions: $REDIS_SESSIONS
+  cache: $REDIS_CACHES
+flask:
+  secret_key: $FLASK_SECRET
+varyaml:
+  defaults:
+    DBUSER: postgres
+    DBPASS: __omit__
+    DBHOST: __omit__
+    REDIS_SESSIONS: __omit__
+    REDIS_CACHES: __omit__
+    # default flask secret for local dev -- don't use this in prod 🙏
+    FLASK_SECRET: d79b8ea9
