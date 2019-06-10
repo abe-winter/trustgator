@@ -1,0 +1,5 @@
+gunicorn
+pugsql
+varyaml
+flask
+bcrypt
