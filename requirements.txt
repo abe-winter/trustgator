@@ -5,3 +5,4 @@ flask==1.0.3
 bcrypt==3.1.6
 statsd==3.3.0
 redis==3.2.1
+psycopg2-binary==2.8.2
