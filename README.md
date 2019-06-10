@@ -23,7 +23,6 @@ Users can 'vouch' for assertions that interest them. Vouches can be positive but
 ### 'Top articles'
 
 * The articles on a user's homepage are those with recent assert/vouch activity from their 2-hop network (i.e. users you've vouched and users your vouchees have vouched)
-* A user's homepage shows articles with recent assert / vouch activity from their two-hop network
 * todo: also articles that are active in the overall community / your topic mix
 
 ### RFCs
