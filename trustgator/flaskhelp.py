@@ -1,4 +1,4 @@
-import logging, contextlib, flask, functools, pugsql, json, redis
+import logging, contextlib, flask, functools, pugsql, rapidjson, redis
 from typing import Optional
 from . import db
 from .util import CONF
@@ -14,17 +14,16 @@ def setup_redis():
   flask.current_app.redis_cache = redis.StrictRedis(CONF['redis']['cache'])
 
 def session_key(sessionid: str) -> str:
-  return json.dumps({'sessionid': sessionid})
+  return rapidjson.dumps({'sessionid': sessionid}, uuid_mode=rapidjson.UM_CANONICAL)
 
 def get_session(redis, sessionid: str) -> Optional[str]:
   val = redis.get(session_key(sessionid))
-  return json.loads(val) if val else None
+  return rapidjson.loads(val) if val else None
 
 def require_session(inner):
   # todo: error if inner is a flask route, i.e. they're in the wrong order
   @functools.wraps(inner)
   def wrapped(*args, **kwargs):
-    print('session', flask.session)
     if 'sessionid' not in flask.session:
       return flask.redirect(flask.url_for('get_login'))
     dets = get_session(flask.current_app.redis_sessions, flask.session['sessionid'])
