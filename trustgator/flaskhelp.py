@@ -27,7 +27,6 @@ def require_session(inner):
     if 'sessionid' not in flask.session:
       return flask.redirect(flask.url_for('get_login'))
     dets = get_session(flask.current_app.redis_sessions, flask.session['sessionid'])
-    print('dets', flask.session, dets)
     if not dets:
       # todo stat & log
       return flask.redirect(flask.url_for('get_login'))

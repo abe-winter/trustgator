@@ -57,3 +57,7 @@ def cache_wrapper(name: str, ttl_secs: int):
       return rapidjson.loads(val)
     return outer
   return wrapper
+
+def clear_cache(name: str, cacheid):
+  key = rapidjson.dumps({'name': name, 'id': cacheid}, sort_keys=True)
+  flask.current_app.redis_cache.delete(key)

@@ -75,3 +75,13 @@ def get_link(linkid):
     username=flask.g.sesh.get('username'),
     **dets
   )
+
+@app.route('/assert', methods=['POST'])
+@flaskhelp.require_session
+def post_assert():
+  return trustgraph.submit_assert(flask.request.form)
+
+@app.route('/assert/<assertid>')
+@flaskhelp.require_session
+def get_assert(assertid):
+  raise NotImplementedError

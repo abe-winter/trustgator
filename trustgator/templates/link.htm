@@ -9,16 +9,25 @@
       <label for="assert-topic" class="col-2 col-form-label">Topic</label>
       <div class="col-10"><input id="assert-topic" type="text" class="form-control" name="topic" placeholder="topic" required></div>
     </div>
-    <label for="assert-body">Assertion</label>
-    <textarea id="assert-body" class="form-control" name="body" placeholder="assertion body" required></textarea>
-    <br>
+    <div class="form-group row">
+      <label for="assert-body" class="col-2 col-form-label">Assert claim</label>
+      <div class="col-10"><textarea id="assert-body" class="form-control" name="body" placeholder="assertion body (max 2000 characters)" required></textarea></div>
+    </div>
     <button type="submit" class="btn btn-primary">Assert</button>
   </form>
   <hr>
   {% if not asserts %}
   <div class="alert alert-warning">No assertions yet for this article -- you'll be the first</div>
-  {% endif %}
-  {% for assert in asserts %}
+  {% else %}
+  <ul>
+  {% for assert_ in asserts %}
+    <li>
+      <span class="badge badge-secondary">{{ assert_.topic }}</span>
+      <a href="{{ url_for('get_assert', assertid=assert_.assertid) }}">{{ assert_.created.split('.')[0] }} by {{ assert_.username }}</a>
+      <p>{{ assert_.claim }}</p>
+    </li>
   {% endfor %}
+  </ul>
+  {% endif %}
 </div>
 {% endblock %}
