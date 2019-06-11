@@ -1,0 +1,12 @@
+<html>
+<head><title>ERROR(s)</title></head>
+<body>
+<h1>🐊💧 ERROR(s)</h1>
+<h2>Errors happened while doing whatever you were trying to do:</h2>
+<ul>
+{% for raw in errors %}
+  <li>{{ raw | safe }}</li>
+{% endfor %}
+</ul>
+</body>
+</html>

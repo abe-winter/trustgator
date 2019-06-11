@@ -6,7 +6,8 @@ from .util import CONF
 def setup_db():
   # todo: figure out pooling with pug
   queries = pugsql.module('./sql/queries')
-  flask.current_app.queries = queries.connect(db.db_url())
+  queries.connect(db.db_url())
+  flask.current_app.queries = queries
 
 def setup_redis():
   flask.current_app.redis_sessions = redis.StrictRedis(CONF['redis']['sessions'])
