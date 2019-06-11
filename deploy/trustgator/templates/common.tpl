@@ -9,10 +9,10 @@
           readOnly: true
 {{- end }}
 
-{{- define "cloudsql.container" }}
+{{- define "cloudsql.volume" }}
       - name: cloudsql-instance-credentials
         secret:
-          secretName: {{ .secret-names.sql-creds }}
+          secretName: {{ .secret_names.sql_creds }}
 {{- end }}
 
 {{- define "env.dbvars" }}
@@ -22,5 +22,5 @@
           value: postgres
         - name: DBPASS
           valueFrom:
-            secretKeyRef: {name: {{ .secret-names.sql }}, key: password}
+            secretKeyRef: {name: {{ .secret_names.sql }}, key: password}
 {{- end }}

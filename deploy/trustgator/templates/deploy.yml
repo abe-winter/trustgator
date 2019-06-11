@@ -30,7 +30,7 @@ spec:
         {{- template "env.dbvars" }}
         - name: FLASK_SECRET
           valueFrom:
-            secretKeyRef: {name: {{ .secret-names.session }}, key: key}
+            secretKeyRef: {name: {{ .secret_names.session | quote }}, key: key}
         resources: {requests: {cpu: "100m"}}
       {{- template "cloudsql.container" }}
       volumes:
