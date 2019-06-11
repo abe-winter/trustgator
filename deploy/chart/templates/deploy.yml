@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: &name {{ .names.deployment }}
+  labels: &labels
+    app: *name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: *name
+  strategy:
+    rollingUpdate:
+      # workaround for the tiny beta box
+      maxUnavailable: 100%
+  template:
+    metadata:
+      labels: *labels
+    spec:
+      containers:
+      - name: trustgator
+        image: {{ .image }}
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /vitals?src=deployment
+            port: 8000
+        env:
+        {{- template "env.dbvars" }}
+        - name: FLASK_SECRET
+          valueFrom:
+            secretKeyRef: {name: {{ .secret-names.session }}, key: key}
+        resources: {requests: {cpu: "100m"}}
+      {{- template "cloudsql.container" }}
+      volumes:
+      {{- template "cloudsql.volume" }}

@@ -1,0 +1,9 @@
+apiVersion: v1
+name: trustgator
+version: 0.0.1
+description: kube setup for running a trustgator
+keywords:
+- link-aggregator
+- trust
+- gator
+home: https://github.com/abe-winter/trustgator
