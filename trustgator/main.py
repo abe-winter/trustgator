@@ -1,7 +1,7 @@
 "main.py -- entrypoint for flask"
 
 import flask
-from . import flaskhelp, auth
+from . import flaskhelp, auth, trustgraph
 from .util import CONF
 
 app = flask.Flask(__name__)
@@ -56,3 +56,22 @@ def get_home():
 def post_logout():
   auth.logout()
   return flask.redirect(flask.url_for('get_login'))
+
+@app.route('/link')
+@flaskhelp.require_session
+def get_addlink():
+  return flask.render_template('submit-link.htm', username=flask.g.sesh.get('username'))
+
+@app.route('/link', methods=['POST'])
+@flaskhelp.require_session
+def post_link():
+  return trustgraph.submit_link(flask.request.form)
+
+@app.route('/link/<linkid>')
+@flaskhelp.require_session
+def get_link(linkid):
+  dets = trustgraph.load_article(linkid)
+  return flask.render_template('link.htm',
+    username=flask.g.sesh.get('username'),
+    **dets
+  )

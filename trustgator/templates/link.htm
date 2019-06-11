@@ -1,0 +1,24 @@
+{% set title='article' %}
+{% extends "base.htm" %}
+{% block content %}
+<div class="container">
+  <h4><a href="{{ link.url }}">{{ link.title }}</a></h4>
+  <form method="POST" action="/assert">
+    <input type="hidden" name="linkid" value="{{ link.linkid }}">
+    <div class="form-group row">
+      <label for="assert-topic" class="col-2 col-form-label">Topic</label>
+      <div class="col-10"><input id="assert-topic" type="text" class="form-control" name="topic" placeholder="topic" required></div>
+    </div>
+    <label for="assert-body">Assertion</label>
+    <textarea id="assert-body" class="form-control" name="body" placeholder="assertion body" required></textarea>
+    <br>
+    <button type="submit" class="btn btn-primary">Assert</button>
+  </form>
+  <hr>
+  {% if not asserts %}
+  <div class="alert alert-warning">No assertions yet for this article -- you'll be the first</div>
+  {% endif %}
+  {% for assert in asserts %}
+  {% endfor %}
+</div>
+{% endblock %}
