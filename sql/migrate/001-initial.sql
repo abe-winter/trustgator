@@ -15,7 +15,8 @@ create table if not exists users (
 create table if not exists links (
   linkid uuid primary key default uuid_generate_v4(),
   userid uuid not null,
-  url text,
+  title text not null,
+  url text not null,
   created timestamp not null default now()
 );
 
