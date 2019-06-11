@@ -1,4 +1,4 @@
-import statsd, varyaml, os
+import statsd, varyaml, os, flask, functools, flask, rapidjson
 from datetime import datetime
 
 CONF = varyaml.load(open(os.environ.get('VARYAML', 'varyaml.yml')))
@@ -30,3 +30,30 @@ class RateLimiter:
       self.base = base
       self.count = 1
     return True
+
+UNIQUE_NAMES = []
+
+def cache_wrapper(name: str, ttl_secs: int):
+  "cache in redis"
+  assert name not in UNIQUE_NAMES
+  UNIQUE_NAMES.append(name)
+  def wrapper(inner):
+    @functools.wraps(inner)
+    def outer(cacheid, *args, **kwargs):
+      if not flask.current_app: # is this some test suite case? booting up?
+        return inner(cacheid, *args, **kwargs)
+      key = rapidjson.dumps({'name': name, 'id': cacheid}, sort_keys=True)
+      probe = flask.current_app.redis_cache.get(key)
+      if probe:
+        # todo: stats.hit
+        return rapidjson.loads(probe)
+      # todo: stats.miss
+      val = rapidjson.dumps(
+        inner(cacheid, *args, **kwargs),
+        uuid_mode=rapidjson.UM_CANONICAL,
+        datetime_mode=rapidjson.DM_ISO8601,
+      )
+      flask.current_app.redis_cache.set(key, val, ex=ttl_secs)
+      return rapidjson.loads(val)
+    return outer
+  return wrapper
