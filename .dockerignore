@@ -1,0 +1,11 @@
+/.direnv/
+**/*.swp
+**/*.pyc
+/deploy/
+/Dockerfile
+/.dockerignore
+/.gitignore
+/.git/
+**/*.jpg
+**/*.svg
+.lastbuild
