@@ -17,6 +17,9 @@ def create_session(dets: dict):
 def create_acct(form: dict, login_also=False) -> dict:
   "returns dict of {sessionid: Optional[str], errors: List[str]}"
   errors = []
+  if util.CONF['invites']['invite_only']:
+    # todo: better error message
+    raise NotImplementedError("todo: invite-only mode")
   if len(form['username']) > 64:
     errors.append("max len for username = 64 chars")
   if not form['password'] or len(form['password']) > 64:

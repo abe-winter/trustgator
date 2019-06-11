@@ -9,6 +9,9 @@ redis:
 flask:
   secret_key: $FLASK_SECRET
 mode: $APP_MODE
+invites:
+  invite_only: false
+  whitelist: []
 varyaml:
   defaults:
     DBUSER: postgres

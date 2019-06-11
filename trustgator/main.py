@@ -15,7 +15,7 @@ app.config.update(
   SESSION_COOKIE_SAMESITE='Lax',
 )
 
-@app.route('/')
+@app.route('/beta-splash')
 def splash():
   return flask.send_from_directory(app.static_folder, 'splash.htm')
 
