@@ -3,19 +3,16 @@ from . import util, flaskhelp
 
 CREATE_RATE = util.RateLimiter('create_acct', max_per_minute=10)
 
-def create_session(userid: str):
+def create_session(dets: dict):
   sessionid = str(uuid.uuid4())
-  val = json.dumps({'userid': userid})
+  val = json.dumps(dets)
+  # todo: fail if already set (i.e. uuid collision)
   flask.current_app.redis_sessions.set(
     flaskhelp.session_key(sessionid),
     val,
     ex=30 * 86400
   )
   return sessionid
-
-def session_key(sessionid: str) -> str:
-  return json.dumps({'sessionid': sessionid})
-  raise NotImplementedError
 
 def create_acct(form: dict, login_also=False) -> dict:
   "returns dict of {sessionid: Optional[str], errors: List[str]}"
@@ -34,10 +31,30 @@ def create_acct(form: dict, login_also=False) -> dict:
   try:
     with flask.current_app.queries.transaction():
       ret = flask.current_app.queries.insert_user(username=form['username'], password=hashed, email=form['email'])
-      return {'sessionid': create_session(str(ret['userid'])), 'errors': []}
+      dets = {'username': form['username'], 'userid': str(ret['userid'])}
+      if login_also:
+        return {'sessionid': create_session(dets), 'errors': []}
+      else:
+        return {'sessionid': None, errors: []}
   except sa.exc.IntegrityError as err:
     if isinstance(err.orig, psycopg2.errors.UniqueViolation):
       print(err) # so logging picks it up
       return {'sessionid': None, 'errors': ['that username already exists']}
     else:
       raise
+
+def login(form: dict) -> str:
+  row = flask.current_app.queries.get_user(username=form['username'])
+  if not row or not bcrypt.checkpw(form['password'].encode('utf8'), row['password'].tobytes()):
+    flask.abort(403)
+  sessionid = create_session({
+    'userid': str(row['userid']),
+    'username': row['username'],
+  })
+  flask.session['sessionid'] = sessionid
+  print('session', flask.session)
+  return flask.redirect(flask.url_for('get_home'))
+
+def logout():
+  sessionid = flask.session.pop('sessionid')
+  flask.current_app.redis_sessions.delete(flaskhelp.session_key(sessionid))

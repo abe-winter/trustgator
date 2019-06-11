@@ -24,12 +24,14 @@ def require_session(inner):
   # todo: error if inner is a flask route, i.e. they're in the wrong order
   @functools.wraps(inner)
   def wrapped(*args, **kwargs):
+    print('session', flask.session)
     if 'sessionid' not in flask.session:
-      return flask.redirect(flask.url_for('splash'))
+      return flask.redirect(flask.url_for('get_login'))
     dets = get_session(flask.current_app.redis_sessions, flask.session['sessionid'])
+    print('dets', flask.session, dets)
     if not dets:
       # todo stat & log
-      return flask.redirect(flask.url_for('splash'))
+      return flask.redirect(flask.url_for('get_login'))
     else:
       flask.g.sesh = dets
     return inner(*args, **kwargs)

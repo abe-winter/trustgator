@@ -1,0 +1,14 @@
+{% macro header(name, username) %}
+<style>
+.just-a-link {background:none; color:inherit; border:none; padding:0; font:inherit; cursor:pointer;}
+</style>
+<nav aria-label="breadcrumb">
+  <div class="breadcrumb">
+    <div class="breadcrumb-item"><a href="/home">🐊 trustgator</a></div>
+    <div class="breadcrumb-item active">{{ name }}</div>
+    <div class="ml-auto">
+	    <form method="POST" action="/logout"><button class="just-a-link" type="submit">logout {{ username }}</button></form>
+    </div>
+  </div>
+</nav>
+{% endmacro %}

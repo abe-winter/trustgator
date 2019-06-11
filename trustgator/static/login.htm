@@ -6,40 +6,25 @@
   <title>trustgator splash</title>
 </head>
 <body>
+
+<nav aria-label="breadcrumb">
+  <div class="breadcrumb">
+    <div class="breadcrumb-item"><a href="/">🐊 trustgator</a></div>
+    <div class="breadcrumb-item active">login</div>
+  </div>
+</nav>
+
 <div class="container">
-<br>
-<div class="jumbotron">
-	<div style="float:left; margin-right:2em"><img src="/static/gator.png"></div>
-	<h1>trustgator</h1>
-	<h3>Link aggregator with 2-hop trust assertions</h3>
-</div>
-<p>This is a demo -- use and enjoy it but remember it's a POC for the trustgator concept. It may change or break.</p>
-<a href="/home" class="btn btn-primary">Login</a>
-<a href="/join" class="btn btn-success">Join</a>
-<a href="https://github.com/abe-winter/trustgator" class="btn btn-warning">trustgator github</a>
-<hr>
-<h2>Overview</h2>
-<p>The overall goal here is to understand how the people in your network view a particular piece of information.</p>
+<h3>⭐ Login</h3>
 
-<h2>Trust features</h2>
-<h4>Assertions</h4>
+<form method="POST">
+  <label>Username <input type="text" class="form-control" name="username" placeholder="username" required></label>
+  <br>
+  <label>Password <input type="password" class="form-control" name="password" placeholder="password" required></label>
+  <br>
+  <button type="submit" class="btn btn-primary">Login</button>
+</form>
 
-<p>Users can 'assert' claims about articles which are visible in the article's thread. Assertions have an attached topic so you may end up trusting a certain user on 'long haul trucking' but not on 'modern dance'.</p>
-
-<h4>Vouches</h4>
-
-<p>Users can 'vouch' for assertions that interest them. Vouches can be positive but also neutral i.e. 'interesting but not sure' or negative i.e. 'disagree'. The goal isn't to hide content you disagree with.</p>
-
-<h4>'Top articles'</h4>
-
-<p>The articles on a user's homepage are those with recent assert/vouch activity from their 2-hop network (i.e. users you've vouched and users your vouchees have vouched)</p>
-
-<h4>RFCs</h4>
-
-Users can 'ping' their trust network with a request for comment. This alerts the network to look at an article and comment on it.
-
-<hr>
-<p>EOM</p>
 </div>
 <body>
 </html>

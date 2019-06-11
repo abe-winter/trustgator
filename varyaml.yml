@@ -8,6 +8,7 @@ redis:
   cache: $REDIS_CACHES
 flask:
   secret_key: $FLASK_SECRET
+mode: $APP_MODE
 varyaml:
   defaults:
     DBUSER: postgres
@@ -17,3 +18,5 @@ varyaml:
     REDIS_CACHES: __omit__
     # default flask secret for local dev -- don't use this in prod 🙏
     FLASK_SECRET: d79b8ea9
+    # local mode disables https-only cookies
+    APP_MODE: local
