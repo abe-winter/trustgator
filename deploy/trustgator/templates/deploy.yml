@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: &name {{ .names.deployment }}
+  name: &name {{ .Values.names.deployment }}
   labels: &labels
     app: *name
 spec:
@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: trustgator
-        image: {{ .image }}
+        image: {{ .Values.image }}
         ports:
         - containerPort: 8000
         readinessProbe:
@@ -30,7 +30,7 @@ spec:
         {{- template "env.dbvars" }}
         - name: FLASK_SECRET
           valueFrom:
-            secretKeyRef: {name: {{ .secret_names.session | quote }}, key: key}
+            secretKeyRef: {name: {{ .Values.secret_names.session }}, key: key}
         resources: {requests: {cpu: "100m"}}
       {{- template "cloudsql.container" }}
       volumes:

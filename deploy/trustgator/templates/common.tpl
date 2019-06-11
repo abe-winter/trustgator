@@ -1,7 +1,7 @@
 {{- define "cloudsql.container" }}
       - name: cloudsql-proxy
         image: gcr.io/cloudsql-docker/gce-proxy:1.11
-        command: {{ .cloudsql_command }}
+        command: {{ .Values.cloudsql_command }}
         securityContext: {runAsUser: 2, allowPrivilegeEscalation: false}
         volumeMounts:
         - name: cloudsql-instance-credentials
@@ -12,7 +12,7 @@
 {{- define "cloudsql.volume" }}
       - name: cloudsql-instance-credentials
         secret:
-          secretName: {{ .secret_names.sql_creds }}
+          secretName: {{ .Values.secret_names.sql_creds }}
 {{- end }}
 
 {{- define "env.dbvars" }}
@@ -22,5 +22,5 @@
           value: postgres
         - name: DBPASS
           valueFrom:
-            secretKeyRef: {name: {{ .secret_names.sql }}, key: password}
+            secretKeyRef: {name: {{ .Values.secret_names.sql }}, key: password}
 {{- end }}

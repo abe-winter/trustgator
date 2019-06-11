@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ .names.ingress }}
+  name: {{ .Values.names.ingress }}
   annotations:
     # automatically use cert-manager to get the cert:
     certmanager.k8s.io/cluster-issuer: letsencrypt
@@ -10,13 +10,13 @@ metadata:
 spec:
   tls:
   - hosts:
-    - {{ .hostname }}
-    secretName: {{ .hostname }}-tls
+    - {{ .Values.hostname }}
+    secretName: {{ .Values.hostname }}-tls
   rules:
-  - host: {{ .hostname }}
+  - host: {{ .Values.hostname }}
     http:
       paths:
       - path: /*
         backend:
-          serviceName: {{ .names.service }}
+          serviceName: {{ .Values.names.service }}
           servicePort: 8000
