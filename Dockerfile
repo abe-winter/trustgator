@@ -7,4 +7,4 @@ COPY sql ./sql
 COPY trustgator ./trustgator
 COPY varyaml.yml .
 COPY logo ./logo
-CMD gunicorn something
+CMD gunicorn -b :8000 trustgator.main:app

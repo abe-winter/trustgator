@@ -8,10 +8,12 @@ def setup_db():
   queries = pugsql.module('./sql/queries')
   queries.connect(db.db_url())
   flask.current_app.queries = queries
+  logging.info('ok pugsql')
 
 def setup_redis():
   flask.current_app.redis_sessions = redis.StrictRedis(CONF['redis']['sessions'])
   flask.current_app.redis_cache = redis.StrictRedis(CONF['redis']['cache'])
+  logging.info('ok redis')
 
 def session_key(sessionid: str) -> str:
   return rapidjson.dumps({'sessionid': sessionid}, uuid_mode=rapidjson.UM_CANONICAL)
