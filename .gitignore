@@ -2,3 +2,5 @@
 *.swp
 *.pyc
 .lastbuild
+# values.yaml is going to be custom per user
+deploy/trustgator/values.yaml

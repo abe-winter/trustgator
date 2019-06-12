@@ -1,0 +1,25 @@
+# use `create job --from=cronjob/apply-schema`
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: apply-schema
+spec:
+  schedule: "* * 1 * *"
+  suspend: true
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: models
+            image: {{ .Values.image }}
+            command: [echo, todo]
+            env:
+            {{- include "env.dbvars" .Values | indent 4 }}
+            - name: APP_MODE
+              value: cloud
+            resources: {requests: {cpu: "100m"}}
+          {{- include "cloudsql.container" .Values | indent 4 }}
+          volumes:
+          {{- include "cloudsql.volume" .Values | indent 4 }}

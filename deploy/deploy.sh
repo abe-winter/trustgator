@@ -5,8 +5,8 @@ set -euo pipefail
 
 PROJ=$(gcloud config get-value project)
 IMG=us.gcr.io/$PROJ/tgtr-flask
-TAG=$(cat .lastbuild)
 THISDIR=$(dirname $0)
+TAG=$(cat $THISDIR/../.lastbuild)
 
 set -x
 helm upgrade trustgator $THISDIR/trustgator --set image=$IMG:$TAG
