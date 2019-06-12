@@ -27,11 +27,17 @@ spec:
             path: /vitals?src=deployment
             port: 8000
         env:
-        {{- template "env.dbvars" }}
+        {{- template "env.dbvars" .Values }}
         - name: FLASK_SECRET
           valueFrom:
             secretKeyRef: {name: {{ .Values.secret_names.session }}, key: key}
+        - name: APP_MODE
+          value: cloud
+        - name: REDIS_SESSIONS
+          value: 127.0.0.1
+        - name: REDIS_CACHES
+          value: 127.0.0.1
         resources: {requests: {cpu: "100m"}}
-      {{- template "cloudsql.container" }}
+      {{- template "cloudsql.container" .Values }}
       volumes:
-      {{- template "cloudsql.volume" }}
+      {{- template "cloudsql.volume" .Values }}
