@@ -2,6 +2,7 @@ names:
   service: tgtr-web
   deployment: tgtr-flask
   ingress: trustgator
+  redis: tgtr-redis
 secret_names:
   session: tgtr-flask-session
   sql: tgtr-cloudsql-password

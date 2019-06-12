@@ -1,0 +1,37 @@
+# redis service & deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.names.redis }}-service
+spec:
+  selector:
+    app: {{ .Values.names.redis }}
+  ports:
+  - protocol: TCP
+    port: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: &name {{ .Values.names.redis }}
+  labels: &labels
+    app: *name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: *name
+  strategy:
+    rollingUpdate:
+      # workaround for the tiny beta box
+      maxUnavailable: 100%
+  template:
+    metadata:
+      labels: *labels
+    spec:
+      containers:
+      - name: trustgator
+        image: redis:5.0.5
+        ports:
+        - containerPort: 6379
+        resources: {requests: {cpu: "200m"}}

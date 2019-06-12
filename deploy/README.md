@@ -8,6 +8,15 @@
 1. run `deploy/build.sh` to upload a docker build and set `.lastbuild`
 1. run `deploy/deploy.sh` to deploy .lastbuild to kube
 
+## DB migrations
+
+Are incredible painful. You have to shell into the trustgator pod and run the specific missing migrations:
+
+```bash
+apt update && apt install -qqy postgresql-client
+PGPASSWORD=$DBPASS psql -U $DBUSER -h $DBHOST -f sql/migrate/*.sql
+```
+
 ## One-time prep on gcloud
 
 1. you can do `gcloud config configurations create $YOURCONFIG` and `gcloud init` if missing a $YOURCONFIG config in gcloud

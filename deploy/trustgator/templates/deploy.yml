@@ -34,9 +34,9 @@ spec:
         - name: APP_MODE
           value: cloud
         - name: REDIS_SESSIONS
-          value: 127.0.0.1
+          value: {{ .Values.names.redis }}-service
         - name: REDIS_CACHES
-          value: 127.0.0.1
+          value: {{ .Values.names.redis }}-service
         resources: {requests: {cpu: "100m"}}
       {{- template "cloudsql.container" .Values }}
       volumes:

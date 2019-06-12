@@ -2,7 +2,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: apply-schema
+  name: apply-tg-schema
 spec:
   schedule: "* * 1 * *"
   suspend: true
@@ -14,7 +14,7 @@ spec:
           containers:
           - name: models
             image: {{ .Values.image }}
-            command: [echo, todo]
+            command: [echo, this, "doesn't", work, yet]
             env:
             {{- include "env.dbvars" .Values | indent 4 }}
             - name: APP_MODE
