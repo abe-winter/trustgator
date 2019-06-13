@@ -28,7 +28,7 @@
   <ul>
   {% for assert_ in pubuser.asserts %}
   <li>
-    <a href="{{ url_for('get_assert', assertid=assert_.assertid) }}">Assertion at {{ assert_.created[:16] }}</a> on link <a href="{{ url_for('get_link', linkid=assert_.linkid) }}">{{ assert_.title }}</a>, topic <span class="badge badge-secondary">{{ assert_.topic }}</span>
+    <a href="{{ url_for('get_assert', assertid=assert_.assertid) }}">{{ assert_.created[:16] }}</a> on link <a href="{{ url_for('get_link', linkid=assert_.linkid) }}">{{ assert_.title }}</a>, topic <span class="badge badge-secondary">{{ assert_.topic }}</span>
     <br>
     {{ assert_.claim }}
   </li>

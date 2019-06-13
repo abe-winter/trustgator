@@ -1,0 +1,37 @@
+{% set title='trustnet' %}
+{% extends "base.htm" %}
+{% macro render_users(users) %}
+  {% if not users %}
+  <div class="alert alert-warning">Empty</div>
+  {% else %}
+  <ul>
+  {% for user in users %}
+  <li>
+    <a href="{{ url_for('get_pubuser', userid=user.userid) }}">{{ user.username }}</a>
+  </li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+{% endmacro %}
+{% block content %}
+<div class="container">
+{% if net.error %}
+<div class="alert alert-danger">{{ net.error }}</div>
+{% else %}
+<h3>🕸️ Your trust network</h3>
+<div class="alert alert-warning">🚧 <b>todo</b>: add paging. In this version, every section cuts off at 100 items</div>
+<details open><summary class="h4">People you vouch directly (1-hop)</summary>
+{{ render_users(net.hop1) }}
+</details>
+
+<details open><summary class="h4">People you vouch indirectly (2-hop)</summary>
+{{ render_users(net.hop2) }}
+</details>
+
+<details open><summary class="h4">People who vouch you (1-hop)</summary>
+{{ render_users(net.incoming) }}
+</details>
+
+{% endif %}
+</div>
+{% endblock %}

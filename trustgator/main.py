@@ -129,3 +129,11 @@ def get_settings():
   return flask.render_template('settings.htm',
     username=flask.g.sesh.get('username'),
   )
+
+@app.route('/trustnet')
+@flaskhelp.require_session
+def get_trustnet():
+  return flask.render_template('trustnet.htm',
+    net=trustgraph.load_trustnet(flask.g.sesh['userid']),
+    username=flask.g.sesh.get('username'),
+  )

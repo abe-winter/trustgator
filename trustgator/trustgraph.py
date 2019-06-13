@@ -108,7 +108,7 @@ def articles_vouchers(userid):
 
 @util.cache_wrapper('load_pubuser', ttl_secs=util.CONF['redis_long_ttl'])
 @util.Degrader('pubuser', {'error': "Load is too darn high! Skipping this"})
-def load_pubuser(userid):
+def load_pubuser(userid: str):
   queries = flask.current_app.queries
   user = queries.get_pubuser(userid=userid)
   if not user or user['delete_on']:
@@ -118,5 +118,16 @@ def load_pubuser(userid):
     'links': list(queries.get_user_links(userid=userid, limit=100)),
     'asserts': list(queries.get_user_asserts(userid=userid, limit=100)),
     'vouches': list(queries.get_user_vouches(userid=userid, limit=100)),
+    'error': None,
+  }
+
+@util.cache_wrapper('load_trustnet', ttl_secs=util.CONF['redis_long_ttl'])
+@util.Degrader('trustnet', {'error': "Load is too darn high! Skipping this"})
+def load_trustnet(userid: str):
+  queries = flask.current_app.queries
+  return {
+    'hop1': list(queries.load_user_vouchees(userid=userid, limit=100)),
+    'hop2': list(queries.load_user_vouchees_2(userid=userid, limit=100)),
+    'incoming': list(queries.load_user_vouchers(userid=userid, limit=100)),
     'error': None,
   }
