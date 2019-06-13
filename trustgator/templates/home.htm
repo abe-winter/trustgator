@@ -15,8 +15,10 @@
   </ol>
 {% endmacro %}
 {% macro link_section(links, empty_msg='Empty') %}
-  {% if links %}
-    {{ render_links(links) }}
+  {% if links.error %}
+  <div class="alert alert-danger">{{ links.error }}</div>
+  {% elif links['items'] %}
+    {{ render_links(links['items']) }}
   {% else %}
   <div class="alert alert-warning">{{ empty_msg }}</div>
   {% endif %}
@@ -31,7 +33,7 @@
   <h2>Recent articles</h2>
 
   <details open><summary class="h4">Globally popular</summary>
-    {{ link_section(global_articles, 'No global activity; either this is a fresh install or something has gone badly wrong 😬') }}
+    {{ link_section(articles.global, 'No global activity; either this is a fresh install or something has gone badly wrong 😬') }}
   </details>
 
   <details open><summary class="h4">People you vouch (1-hop)</summary>

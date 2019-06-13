@@ -69,25 +69,28 @@ def submit_vouch(form: dict):
 @util.cache_wrapper('global_articles', ttl_secs=util.CONF['redis_ttl'])
 def global_articles():
   # note: this cache doesn't get cleared; this can be eventually consistent for perf reasons
-  return list(flask.current_app.queries.load_global_active(wide_count=100, narrow_count=10))
+  return {
+    'items': list(flask.current_app.queries.load_global_active(wide_count=100, narrow_count=10)),
+    'error': None,
+  }
 
 @util.cache_wrapper('articles_1hop', ttl_secs=util.CONF['redis_long_ttl'])
 def articles_1hop(userid):
-  return list(flask.current_app.queries.links_1hop(
-    userid=userid,
-    limit=5,
-  ))
+  return {
+    'items': list(flask.current_app.queries.links_1hop(userid=userid, limit=5)),
+    'error': None,
+  }
 
 @util.cache_wrapper('articles_2hop', ttl_secs=util.CONF['redis_long_ttl'])
 def articles_2hop(userid):
-  return list(flask.current_app.queries.links_2hop(
-    userid=userid,
-    limit=5,
-  ))
+  return {
+    'items': list(flask.current_app.queries.links_2hop(userid=userid, limit=5)),
+    'error': None,
+  }
 
 @util.cache_wrapper('articles_vouchers', ttl_secs=util.CONF['redis_long_ttl'])
 def articles_vouchers(userid):
-  return list(flask.current_app.queries.links_vouchers(
-    userid=userid,
-    limit=5,
-  ))
+  return {
+    'items': list(flask.current_app.queries.links_vouchers(userid=userid, limit=5)),
+    'error': None,
+  }
