@@ -84,3 +84,10 @@ def articles_2hop(userid):
     userid=userid,
     limit=5,
   ))
+
+@util.cache_wrapper('articles_vouchers', ttl_secs=util.CONF['redis_long_ttl'])
+def articles_vouchers(userid):
+  return list(flask.current_app.queries.links_vouchers(
+    userid=userid,
+    limit=5,
+  ))

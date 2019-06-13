@@ -53,6 +53,7 @@ def get_home():
     articles={
       'hop1': trustgraph.articles_1hop(flask.g.sesh['userid']),
       'hop2': trustgraph.articles_2hop(flask.g.sesh['userid']),
+      'followers': trustgraph.articles_vouchers(flask.g.sesh['userid']),
     },
     rfcs={},
     global_articles=trustgraph.global_articles(),
