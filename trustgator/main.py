@@ -52,6 +52,7 @@ def get_home():
   return flask.render_template('home.htm',
     articles={
       'hop1': trustgraph.articles_1hop(flask.g.sesh['userid']),
+      'hop2': trustgraph.articles_2hop(flask.g.sesh['userid']),
     },
     rfcs={},
     global_articles=trustgraph.global_articles(),

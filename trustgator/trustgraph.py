@@ -78,5 +78,9 @@ def articles_1hop(userid):
     limit=5,
   ))
 
+@util.cache_wrapper('articles_2hop', ttl_secs=util.CONF['redis_long_ttl'])
 def articles_2hop(userid):
-  raise NotImplementedError
+  return list(flask.current_app.queries.links_2hop(
+    userid=userid,
+    limit=5,
+  ))
