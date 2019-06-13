@@ -45,11 +45,14 @@ def get_login():
 def post_login():
   return auth.login(flask.request.form)
 
+# todo: timing stats
 @app.route('/home')
 @flaskhelp.require_session
 def get_home():
   return flask.render_template('home.htm',
-    articles={},
+    articles={
+      'hop1': trustgraph.articles_1hop(flask.g.sesh['userid']),
+    },
     rfcs={},
     global_articles=trustgraph.global_articles(),
     username=flask.g.sesh.get('username'),

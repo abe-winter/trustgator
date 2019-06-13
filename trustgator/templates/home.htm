@@ -7,10 +7,19 @@
     <a href="{{ url_for('get_link', linkid=link.linkid) }}">{{ link.title }}</a>
     by <a href="{{ url_for('get_pubuser', userid=link.userid) }}">{{ link.username }}</a>
     at {{ link.created[:16] }}
+    {% if link.assert_count %}
     ({{ link.assert_count }} asserts)
+    {% endif %}
   </li>
   {% endfor %}
   </ol>
+{% endmacro %}
+{% macro link_section(links, empty_msg='Empty') %}
+  {% if links %}
+    {{ render_links(links) }}
+  {% else %}
+  <div class="alert alert-warning">{{ empty_msg }}</div>
+  {% endif %}
 {% endmacro %}
 {% block content %}
 <div class="container">
@@ -21,40 +30,21 @@
   <h2>Recent articles</h2>
 
   <details open><summary class="h4">Globally popular</summary>
-    {% if global_articles %}
-      {{ render_links(global_articles) }}
-    {% else %}
-    <div class="alert alert-warning">No global activity; either this is a fresh install or something has gone badly wrong 😬</div>
-    {% endif %}
-  </details>
-
-  <details open><summary class="h4">Your posts</summary>
-    {% if articles.yours %}
-    {% else %}
-    <div class="alert alert-warning">No recent submissions from you</div>
-    {% endif %}
+    {{ link_section(global_articles, 'No global activity; either this is a fresh install or something has gone badly wrong 😬') }}
   </details>
 
   <details open><summary class="h4">People you vouch (1-hop)</summary>
-    {% if articles.hop1 %}
-    {% else %}
-    <div class="alert alert-warning">Empty</div>
-    {% endif %}
+    {{ link_section(articles.hop1) }}
   </details>
 
   <details open><summary class="h4">People you vouch indirectly (2-hop)</summary>
-    {% if articles.hop2 %}
-    {% else %}
-    <div class="alert alert-warning">Empty</div>
-    {% endif %}
+    {{ link_section(articles.hop2) }}
   </details>
 
   <details open><summary class="h4">People who vouch you (1-hop)</summary>
-    {% if articles.followers %}
-    {% else %}
-    <div class="alert alert-warning">Empty</div>
-    {% endif %}
+    {{ link_section(articles.followers) }}
   </details>
+{#
   <hr>
 
   <h2>Requests for comment</h2>
@@ -72,5 +62,6 @@
     <div class="alert alert-warning">Empty</div>
     {% endif %}
   </details>
+#}
 </div>
 {% endblock %}

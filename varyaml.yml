@@ -13,6 +13,8 @@ invites:
   invite_only: false
   whitelist: []
 redis_ttl: 5
+# long_ttl is for individual users hitting their own stuff slowly (vs many users hitting one global resource)
+redis_long_ttl: 60
 domain_name: $DOMAIN_NAME
 emails:
   ocilla: $OCILLA
