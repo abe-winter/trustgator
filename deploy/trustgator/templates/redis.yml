@@ -34,4 +34,7 @@ spec:
         image: redis:5.0.5
         ports:
         - containerPort: 6379
-        resources: {requests: {cpu: "200m"}}
+        resources:
+          requests: {cpu: "200m"}
+          # todo: set maxmemory and maxmemory-LRU in redis.conf
+          limits: {memory: "1Gi"}
