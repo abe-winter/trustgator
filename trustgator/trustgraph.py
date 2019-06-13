@@ -78,7 +78,7 @@ def submit_vouch(form: dict):
 def global_articles():
   # note: this cache doesn't get cleared; this can be eventually consistent for perf reasons
   return {
-    'items': list(flask.current_app.queries.load_global_active(wide_count=100, narrow_count=10)),
+    'items': list(flask.current_app.queries.load_global_active(wide_count=100, narrow_count=20)),
     'error': None,
   }
 
