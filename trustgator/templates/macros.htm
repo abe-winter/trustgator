@@ -6,9 +6,11 @@
   <div class="breadcrumb">
     <div class="breadcrumb-item"><a href="/home">🐊 trustgator</a></div>
     <div class="breadcrumb-item active">{{ name }}</div>
+    {% if username %}
     <div class="ml-auto">
 	    <form method="POST" action="/logout"><button class="just-a-link" type="submit">logout {{ username }}</button></form>
     </div>
+    {% endif %}
   </div>
 </nav>
 {% endmacro %}

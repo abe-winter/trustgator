@@ -1,0 +1,46 @@
+{% set title='assertion' %}
+{% extends "base.htm" %}
+{% block content %}
+<style>
+  .dense-radio {margin: 0 10px;}
+  .red {color: #900;}
+  .blue {color: #009;}
+</style>
+<div class="container">
+  <h4>Back to <a href="{{ url_for('get_link', linkid=assert_.linkid) }}">{{ assert_.title }}</a></h4>
+  <p>posted {{ assert_.created[:assert_.created.rindex(':')] }} by <a href="{{ url_for('get_pubuser', userid=assert_.userid) }}">{{ assert_.username }}</a></p>
+  <h3><span class="badge badge-secondary">{{ assert_.topic }}</span></h3>
+  <p>{{ assert_.claim }}</p>
+  <hr>
+  <h4>Vouches</h4>
+  <ol>
+    <li>Vouch activity is public</li>
+    <li>Vouches speak about claims not people</li>
+    <li>Negative vouches don't mute claims; they disagree but also add the claimant to your trust network</li>
+  </ol>
+  {% if your_vouch %}
+  <div class="alert alert-success">You vouched with score {{ your_vouch.score }} on {{ your_vouch.created[:16] }}</div>
+  {% else %}
+  <form method="POST" action="/vouch">
+    <input type="hidden" name="assertid" value="{{ assert_.assertid }}">
+    <label class="dense-radio red"><input type="radio" name="score" value="-2"> -2</label>
+    <label class="dense-radio red"><input type="radio" name="score" value="-1"> -1</label>
+    <label class="dense-radio"><input type="radio" name="score" value="0"> 0</label>
+    <label class="dense-radio blue"><input type="radio" name="score" value="1"> +1</label>
+    <label class="dense-radio blue"><input type="radio" name="score" value="2"> +2</label>
+    <button type="submit" class="btn btn-primary">Submit vouch</button>
+  </form>
+  <br>
+  {% endif %}
+  {% if not vouches %}
+  <div class="alert alert-warning">No vouches yet for this assert -- you'll be the first</div>
+  {% else %}
+  <p>Counts: {{ vouch_counts }}</p>
+  <ul>
+  {% for vouch in vouches %}
+  <li>{{ vouch.score }} by user <a href="{{ url_for('get_pubuser', userid=vouch.userid) }}">{{ vouch.username }}</a> at {{ vouch.created[:16] }}</li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endblock %}

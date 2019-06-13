@@ -1,4 +1,4 @@
-"trustgraphy.py -- getters, setters and enumerators over the 2-hop graph"
+"trustgraph.py -- getters, setters and enumerators over the 2-hop graph"
 import flask, collections
 from . import util
 
@@ -15,7 +15,7 @@ def submit_link(form: dict):
   return flask.redirect(flask.url_for('get_link', linkid=ret['linkid']))
 
 # todo: crank up ttl_secs when system is busy
-@util.cache_wrapper('load_article', ttl_secs=5)
+@util.cache_wrapper('load_article', ttl_secs=util.CONF['redis_ttl'])
 # todo: stats timing here
 def load_article(linkid: str):
   "load link and related resources"
@@ -28,11 +28,11 @@ def load_article(linkid: str):
   for vouch in vouches:
     vouch_dict[vouch['assertid']][vouch['score']] = vouch['count']
   for assert_ in asserts:
-    assert_['vouches'] = vouch_dict.get(assert_['assertid']) or {}
+    assert_['vouches'] = sorted(vouch_dict.get(assert_['assertid'], {}).items())
   return {'link': link, 'asserts': asserts}
 
 def submit_assert(form: dict):
-  form['linkid']
+  assert form['linkid']
   assert len(form['topic']) < 128
   assert len(form['body']) < 2000
   flask.current_app.queries.insert_assert(
@@ -43,3 +43,25 @@ def submit_assert(form: dict):
   )
   util.clear_cache('load_article', form['linkid'])
   return flask.redirect(flask.url_for('get_link', linkid=form['linkid']))
+
+@util.cache_wrapper('load_assertion', ttl_secs=util.CONF['redis_ttl'])
+def load_assertion(assertid: str):
+  assert_ = flask.current_app.queries.load_join_assert(assertid=assertid)
+  vouches = list(flask.current_app.queries.load_assert_vouches(assertid=assertid))
+  vouch_counts = list(collections.Counter(vouch['score'] for vouch in vouches).items())
+  return assert_, vouches, vouch_counts
+
+def submit_vouch(form: dict):
+  assert form['assertid']
+  score = int(form['score'])
+  assert score >= -2 and score <= 2
+  # note: *not* doing a foreign key check of assertid; at worst we have a bunch of random uuids in there attached to bad users
+  flask.current_app.queries.insert_vouch(
+    userid=flask.g.sesh['userid'],
+    assertid=form['assertid'],
+    score=score,
+  )
+  # todo: cache invalidation is a tough accounting problem; automate or lint
+  # note: only clear cache after the DB has validated the vouch above
+  util.clear_cache('load_assertion', form['assertid'])
+  return flask.redirect(flask.url_for('get_assert', linkid=form['assertid']))

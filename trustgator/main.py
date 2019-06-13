@@ -84,4 +84,27 @@ def post_assert():
 @app.route('/assert/<assertid>')
 @flaskhelp.require_session
 def get_assert(assertid):
-  raise NotImplementedError
+  assert_, vouches, vouch_counts = trustgraph.load_assertion(assertid)
+  return flask.render_template('assert.htm',
+    assert_=assert_,
+    vouches=vouches,
+    vouch_counts=vouch_counts,
+    username=flask.g.sesh.get('username'),
+    your_vouch=next((vouch for vouch in vouches if vouch['userid'] == flask.g.sesh['userid']), None),
+  )
+
+@app.route('/vouch', methods=['POST'])
+@flaskhelp.require_session
+def post_vouch():
+  return trustgraph.submit_vouch(flask.request.form)
+
+@app.route('/pubuser/<userid>')
+@flaskhelp.require_session
+def get_pubuser(userid):
+  return 'todo: public page for user'
+
+@app.route('/legal')
+def get_legal():
+  return flask.render_template('legal.htm',
+    ocilla=CONF['emails']['ocilla'] or f'legal@{CONF["domain_name"]}'
+  )

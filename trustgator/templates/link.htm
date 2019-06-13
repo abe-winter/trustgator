@@ -25,6 +25,9 @@
       <span class="badge badge-secondary">{{ assert_.topic }}</span>
       <a href="{{ url_for('get_assert', assertid=assert_.assertid) }}">{{ assert_.created.split('.')[0] }} by {{ assert_.username }}</a>
       <p>{{ assert_.claim }}</p>
+      {% if assert_.vouches %}
+      <p>Vouch counts: {{ assert_.vouches}}</p>
+      {% endif %}
     </li>
   {% endfor %}
   </ul>
