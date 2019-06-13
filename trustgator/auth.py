@@ -82,9 +82,9 @@ def logout():
   sessionid = flask.session.pop('sessionid')
   flask.current_app.redis_sessions.delete(flaskhelp.session_key(sessionid))
 
-def issue_invite(issuing_user: str, ignore_max=False):
+def issue_invite(issuing_user: str, ignore_max=False, queries=None):
   "ignore_max is for manually granting these to power users"
-  queries = flask.current_app.queries
+  queries = queries or flask.current_app.queries
   with queries.transaction():
     if not ignore_max:
       ninvites = len(list(queries.get_invites(userid=issuing_user)))
