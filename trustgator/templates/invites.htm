@@ -1,0 +1,26 @@
+{% set title='invites' %}
+{% extends "base.htm" %}
+{% block content %}
+<div class="container">
+<h2>💌 Invitations</h2>
+{% if not invites %}
+<div class="alert alert-warning">You haven't made any invitation codes yet</div>
+{% else %}
+<table class="table">
+<tr> <th>code</th> <th>created</th> <th>redeemed</th> </tr>
+{% for invite in invites %}
+<tr>
+  <td>{{ invite.code }}</td>
+  <td>{{ invite.created.strftime('%Y/%m/%d %H:%M') }}</td>
+  <td>{% if invite.redeemed %}
+    <a href="{{ url_for('get_pubuser', userid=invite.redeemed_userid) }}">{{ invite.username }}</a> on {{ invite.redeemed.strftime('%Y/%m/%d %H:%M') }}
+  {% endif %}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+<form method="POST">
+  <button class="btn btn-primary">Get invite code</button>
+</form>
+</div>
+{% endblock %}

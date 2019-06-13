@@ -43,3 +43,11 @@ Differences:
 * negative vouches -- unlike twitter, our network includes disagreement
 * tagged expertise -- a single user account has different network trust scores for different topics
 * no 'reply' semantic -- TG users aren't directly responding to each other
+
+## Todo
+
+### Write tests for
+
+* the queries in trustgraph.py
+* the helper functions / classes in util (Degraded class, cache_wrapper decorator)
+* signup logic (esp invite code state space)

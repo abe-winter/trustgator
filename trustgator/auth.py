@@ -1,4 +1,4 @@
-import bcrypt, flask, psycopg2, sqlalchemy as sa, rapidjson, uuid
+import bcrypt, flask, psycopg2, sqlalchemy as sa, rapidjson, uuid, binascii, os
 from . import util, flaskhelp
 
 CREATE_RATE = util.RateLimiter('create_acct', max_per_minute=10)
@@ -14,27 +14,39 @@ def create_session(dets: dict):
   )
   return sessionid
 
+class InviteCodeFailure(Exception): pass
+
 def create_acct(form: dict, login_also=False) -> dict:
   "returns dict of {sessionid: Optional[str], errors: List[str]}"
   errors = []
-  if util.CONF['invites']['invite_only']:
-    # todo: better error message
-    raise NotImplementedError("todo: invite-only mode")
   if len(form['username']) > 64:
     errors.append("max len for username = 64 chars")
   if not form['password'] or len(form['password']) > 64:
     errors.append("max len for password = 64 chars")
   if form['email'] and '@' not in form['email']:
     errors.append("email needs an @")
-  if not CREATE_RATE.check():
+  if util.CONF['invites']['invite_only']:
+    if not form['invite_code']:
+      errors.append("the site is in invite_only mode, you need an invitation")
+  elif not CREATE_RATE.check():
     errors.append('too many new accounts! sorry! try again later or get on the waitlist at <a href="/waitlist">waitlist</a> or ask a friend for an invite')
   if errors:
     # todo: stat
     return {'sessionid': None, 'errors': errors}
   hashed = bcrypt.hashpw(form['password'].encode('utf8'), bcrypt.gensalt())
+  queries = flask.current_app.queries
   try:
-    with flask.current_app.queries.transaction():
-      ret = flask.current_app.queries.insert_user(username=form['username'], password=hashed, email=form['email'])
+    with queries.transaction():
+      ret = queries.insert_user(username=form['username'], password=hashed, email=form['email'])
+      if form['invite_code']:
+        invite = queries.get_invite(code=form['invite_code'])
+        # note: throwing here so the tx rolls back
+        if not invite:
+          raise InviteCodeFailure("invite code not found -- did you type it wrong maybe?")
+        elif invite['redeemed_userid']:
+          raise InviteCodeFailure("invite code already used")
+        queries.use_invite(code=form['invite_code'], userid=str(ret['userid']))
+        # todo: make sure updated row count is 1 above
       dets = {'username': form['username'], 'userid': str(ret['userid'])}
       # todo: stat
       if login_also:
@@ -48,6 +60,8 @@ def create_acct(form: dict, login_also=False) -> dict:
       return {'sessionid': None, 'errors': ['that username already exists']}
     else:
       raise
+  except InviteCodeFailure as err:
+    return {'errors': [err.args[0]]}
 
 # todo: timing stat
 def login(form: dict) -> str:
@@ -67,3 +81,13 @@ def logout():
   # todo: stat
   sessionid = flask.session.pop('sessionid')
   flask.current_app.redis_sessions.delete(flaskhelp.session_key(sessionid))
+
+def issue_invite(issuing_user: str):
+  queries = flask.current_app.queries
+  with queries.transaction():
+    ninvites = len(list(queries.get_invites(userid=issuing_user)))
+    if ninvites >= util.CONF['invites']['max_per_user']:
+      return 'error: you hit the max'
+    code = binascii.hexlify(os.urandom(5)).decode('ascii')
+    queries.insert_invite(userid=issuing_user, code=code)
+  return flask.redirect(flask.url_for('get_invites'))

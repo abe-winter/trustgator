@@ -137,3 +137,17 @@ def get_trustnet():
     net=trustgraph.load_trustnet(flask.g.sesh['userid']),
     username=flask.g.sesh.get('username'),
   )
+
+@app.route('/invites')
+@flaskhelp.require_session
+def get_invites():
+  invites = list(flask.current_app.queries.get_invites(userid=flask.g.sesh['userid']))
+  return flask.render_template('invites.htm',
+    invites=invites,
+    username=flask.g.sesh.get('username'),
+  )
+
+@app.route('/invites', methods=['POST'])
+@flaskhelp.require_session
+def post_invites():
+  return auth.issue_invite(flask.g.sesh['userid'])

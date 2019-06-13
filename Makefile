@@ -14,7 +14,7 @@ redis-host:
 
 migrate-dev:
 	$(eval HOST := $(shell make db-host))
-	ls sql/migrate/*.sql | xargs psql --host $(HOST) --user $(USER) -f
+	ls sql/migrate/*.sql | xargs -n 1 psql --host $(HOST) --user $(USER) -f
 
 psql:
 	$(eval HOST := $(shell make db-host))

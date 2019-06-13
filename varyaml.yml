@@ -10,8 +10,9 @@ flask:
   secret_key: $FLASK_SECRET
 mode: $APP_MODE
 invites:
-  invite_only: false
+  invite_only: $INVITE_ONLY
   whitelist: []
+  max_per_user: 5
 redis_ttl: 5
 # long_ttl is for individual users hitting their own stuff slowly (vs many users hitting one global resource)
 redis_long_ttl: 60
@@ -31,3 +32,5 @@ varyaml:
     APP_MODE: local
     OCILLA: null
     DOMAIN_NAME: null
+    # warning: no way to pass false in vars -- need to parse vars as yaml
+    INVITE_ONLY: true
