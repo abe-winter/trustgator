@@ -20,6 +20,10 @@ psql:
 	$(eval HOST := $(shell make db-host))
 	psql --host $(HOST) --user $(USER)
 
+redis-cli:
+	$(eval HOST := $(shell make redis-host))
+	redis-cli -h $(HOST)
+
 serve:
 	# optionally run this with `FLASK_DEBUG=1 make serve` to get debugger and reloading
 	FLASK_APP=trustgator.main flask run
