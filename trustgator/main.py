@@ -122,3 +122,10 @@ def get_legal():
   return flask.render_template('legal.htm',
     ocilla=CONF['emails']['ocilla'] or f'legal@{CONF["domain_name"]}'
   )
+
+@app.route('/settings')
+@flaskhelp.require_session
+def get_settings():
+  return flask.render_template('settings.htm',
+    username=flask.g.sesh.get('username'),
+  )
