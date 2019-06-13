@@ -12,6 +12,10 @@ mode: $APP_MODE
 invites:
   invite_only: false
   whitelist: []
+redis_ttl: 5
+domain_name: $DOMAIN_NAME
+emails:
+  ocilla: $OCILLA
 varyaml:
   defaults:
     DBUSER: postgres
@@ -23,3 +27,5 @@ varyaml:
     FLASK_SECRET: d79b8ea9
     # local mode disables https-only cookies
     APP_MODE: local
+    OCILLA: null
+    DOMAIN_NAME: null
