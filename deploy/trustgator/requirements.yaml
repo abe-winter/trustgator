@@ -1,0 +1,5 @@
+dependencies:
+- name: graphite
+  version: 0.3.4
+  condition: graphite_enabled
+  repository: https://kiwigrid.github.io

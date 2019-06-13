@@ -37,6 +37,9 @@ spec:
           value: {{ .Values.names.redis }}-service
         - name: REDIS_CACHES
           value: {{ .Values.names.redis }}-service
+        - name: STATS_HOST
+          # todo: move this to values.yaml
+          value: trustgator-graphite
         resources: {requests: {cpu: "100m"}}
       {{- template "cloudsql.container" .Values }}
       volumes:

@@ -6,7 +6,7 @@
 1. check `gcloud config configurations list` (if relevant to you)
 1. ideally git is clean (no modifications in `git status`)
 1. run `deploy/build.sh` to upload a docker build and set `.lastbuild`
-1. run `deploy/deploy.sh` to deploy .lastbuild to kube
+1. run `deploy/deploy.sh` to deploy .lastbuild to kube (using helm)
 
 ## DB migrations
 
@@ -31,6 +31,7 @@ PGPASSWORD=$DBPASS psql -U $DBUSER -h $DBHOST -f sql/migrate/*.sql
 1. run the apply-schema job (todo: migrations aren't automatic yet)
 1. create secrets with DB & flask-session passwords
 1. install helm on your cluster with ./install-helm.sh
+1. `helm repo add kiwigrid https://kiwigrid.github.io` (ugh -- why isn't this automatic from requirements.yaml? bitrot)
 1. install the chart with `helm install -f trustgator/values_gke_headsdown_us-east1-b_headsdown.yaml --name trustgator ./trustgator`
 
 ## Dev help

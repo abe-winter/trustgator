@@ -8,6 +8,7 @@ secret_names:
   sql: tgtr-cloudsql-password
   sql_creds: cloudsql
 include_cloudsql: true
+graphite_enabled: true
 image: us.gcr.io/PROJECT/tgtr-flask:latest
 cloudsql_command: '["/cloud_sql_proxy", "-instances=PROJ:us-east1:PROJ=tcp:5432", "-credential_file=/secrets/cloudsql/PROJ-something.json"]'
 hostname: trustgator.page
