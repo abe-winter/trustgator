@@ -67,6 +67,7 @@ def submit_vouch(form: dict):
   return flask.redirect(flask.url_for('get_assert', assertid=form['assertid']))
 
 @util.cache_wrapper('global_articles', ttl_secs=util.CONF['redis_ttl'])
+@util.Degrader('2hop', {'items': [], 'error': "Load is too darn high! Skipping this"})
 def global_articles():
   # note: this cache doesn't get cleared; this can be eventually consistent for perf reasons
   return {
@@ -75,6 +76,7 @@ def global_articles():
   }
 
 @util.cache_wrapper('articles_1hop', ttl_secs=util.CONF['redis_long_ttl'])
+@util.Degrader('2hop', {'items': [], 'error': "Load is too darn high! Skipping this"})
 def articles_1hop(userid):
   return {
     'items': list(flask.current_app.queries.links_1hop(userid=userid, limit=5)),
@@ -82,6 +84,7 @@ def articles_1hop(userid):
   }
 
 @util.cache_wrapper('articles_2hop', ttl_secs=util.CONF['redis_long_ttl'])
+@util.Degrader('2hop', {'items': [], 'error': "Load is too darn high! Skipping this"})
 def articles_2hop(userid):
   return {
     'items': list(flask.current_app.queries.links_2hop(userid=userid, limit=5)),
@@ -89,6 +92,7 @@ def articles_2hop(userid):
   }
 
 @util.cache_wrapper('articles_vouchers', ttl_secs=util.CONF['redis_long_ttl'])
+@util.Degrader('2hop', {'items': [], 'error': "Load is too darn high! Skipping this"})
 def articles_vouchers(userid):
   return {
     'items': list(flask.current_app.queries.links_vouchers(userid=userid, limit=5)),
