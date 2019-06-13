@@ -26,7 +26,7 @@
 {% block content %}
 <div class="container">
   <a href="/link">📤 submit</a>
-  <a href="/activity">📊 your activity</a>
+  <a href="{{ url_for('get_pubuser', userid=userid) }}">📊 your activity</a>
   <a href="/trustnet">🕸️ your network</a>
   <a href="/settings">⚙️ settings</a>
   <hr>

@@ -1,0 +1,63 @@
+{% set title='public user' %}
+{% extends "base.htm" %}
+{% block content %}
+<div class="container">
+{% if pubuser.error %}
+<div class="alert alert-danger">{{ pubuser.error }}</div>
+{% else %}
+
+<h3>Public activity for <b>{{ pubuser.user.username }}</b></h3>
+<div class="alert alert-warning">🚧 <b>todo</b>: add paging. In this version, every section cuts off at 100 items</div>
+
+<details open><summary class="h4">Links</summary>
+  {% if pubuser.links %}
+  <ul>
+  {% for link in pubuser.links %}
+  <li>
+    <a href="{{ url_for('get_link', linkid=link.linkid) }}">{{ link.title }} {{ link.url }}</a> posted on {{ link.created[:16] }}
+  </li>
+  {% endfor %}
+  </ul>
+  {% else %}
+  <div class="alert alert-warning">Empty</div>
+  {% endif %}
+</details>
+
+<details open><summary class="h4">Asserts</summary>
+  {% if pubuser.asserts %}
+  <ul>
+  {% for assert_ in pubuser.asserts %}
+  <li>
+    <a href="{{ url_for('get_assert', assertid=assert_.assertid) }}">Assertion at {{ assert_.created[:16] }}</a> on link <a href="{{ url_for('get_link', linkid=assert_.linkid) }}">{{ assert_.title }}</a>, topic <span class="badge badge-secondary">{{ assert_.topic }}</span>
+    <br>
+    {{ assert_.claim }}
+  </li>
+  {% endfor %}
+  </ul>
+  {% else %}
+  <div class="alert alert-warning">Empty</div>
+  {% endif %}
+</details>
+
+<details open><summary class="h4">Vouches</summary>
+  {% if pubuser.vouches %}
+  <ul>
+  {% for vouch in pubuser.vouches %}
+  <li>
+    score {{ vouch.score }}
+    for link <a href="{{ url_for('get_link', linkid=vouch.linkid) }}">{{ vouch.title }}</a>
+    for <a href="{{ url_for('get_assert', assertid=vouch.assertid) }}">claim</a>
+    on topic <span class="badge badge-secondary">{{ vouch.topic }}</span>
+    by user <a href="{{ url_for('get_pubuser', userid=vouch.userid) }}">{{ vouch.username }}</a>
+    at {{ vouch.created[:16] }}
+  </li>
+  {% endfor %}
+  </ul>
+  {% else %}
+  <div class="alert alert-warning">Empty</div>
+  {% endif %}
+</details>
+
+{% endif %}
+</div>
+{% endblock %}

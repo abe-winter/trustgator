@@ -7,11 +7,13 @@ from . import util
 def submit_link(form: dict):
   assert len(form['title']) < 400
   assert len(form['url']) < 4000
+  userid = flask.g.sesh['userid']
   ret = flask.current_app.queries.insert_link(
-    userid=flask.g.sesh['userid'],
+    userid=userid,
     title=form['title'],
     url=form['url']
   )
+  util.clear_cache('load_pubuser', userid)
   return flask.redirect(flask.url_for('get_link', linkid=ret['linkid']))
 
 # todo: crank up ttl_secs when system is busy
@@ -35,13 +37,15 @@ def submit_assert(form: dict):
   assert form['linkid']
   assert len(form['topic']) < 128
   assert len(form['body']) < 2000
+  userid = flask.g.sesh['userid']
   flask.current_app.queries.insert_assert(
-    userid=flask.g.sesh['userid'],
+    userid=userid,
     linkid=form['linkid'],
     topic=form['topic'],
     claim=form['body'],
   )
   util.clear_cache('load_article', form['linkid'])
+  util.clear_cache('load_pubuser', userid)
   return flask.redirect(flask.url_for('get_link', linkid=form['linkid']))
 
 @util.cache_wrapper('load_assertion', ttl_secs=util.CONF['redis_ttl'])
@@ -56,16 +60,19 @@ def submit_vouch(form: dict):
   score = int(form['score'])
   assert score >= -2 and score <= 2
   # note: *not* doing a foreign key check of assertid; at worst we have a bunch of random uuids in there attached to bad users
+  userid = flask.g.sesh['userid']
   flask.current_app.queries.insert_vouch(
-    userid=flask.g.sesh['userid'],
+    userid=userid,
     assertid=form['assertid'],
     score=score,
   )
   # todo: cache invalidation is a tough accounting problem; automate or lint
   # note: only clear cache after the DB has validated the vouch above
   util.clear_cache('load_assertion', form['assertid'])
+  util.clear_cache('load_pubuser', userid)
   return flask.redirect(flask.url_for('get_assert', assertid=form['assertid']))
 
+# todo: think about how to mix cache_wrapper and degrader; I don't want to include cache hit times in the degrader computation *but* I also don't want to cache timing errors (or do I)
 @util.cache_wrapper('global_articles', ttl_secs=util.CONF['redis_ttl'])
 @util.Degrader('2hop', {'items': [], 'error': "Load is too darn high! Skipping this"})
 def global_articles():
@@ -96,5 +103,20 @@ def articles_2hop(userid):
 def articles_vouchers(userid):
   return {
     'items': list(flask.current_app.queries.links_vouchers(userid=userid, limit=5)),
+    'error': None,
+  }
+
+@util.cache_wrapper('load_pubuser', ttl_secs=util.CONF['redis_long_ttl'])
+@util.Degrader('pubuser', {'error': "Load is too darn high! Skipping this"})
+def load_pubuser(userid):
+  queries = flask.current_app.queries
+  user = queries.get_pubuser(userid=userid)
+  if not user or user['delete_on']:
+    return {'error': 'User missing or deletd'}
+  return {
+    'user': user,
+    'links': list(queries.get_user_links(userid=userid, limit=100)),
+    'asserts': list(queries.get_user_asserts(userid=userid, limit=100)),
+    'vouches': list(queries.get_user_vouches(userid=userid, limit=100)),
     'error': None,
   }

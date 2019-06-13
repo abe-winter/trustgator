@@ -57,6 +57,7 @@ def get_home():
       'followers': trustgraph.articles_vouchers(flask.g.sesh['userid']),
     },
     rfcs={},
+    userid=flask.g.sesh.get('userid'),
     username=flask.g.sesh.get('username'),
   )
 
@@ -111,7 +112,10 @@ def post_vouch():
 @app.route('/pubuser/<userid>')
 @flaskhelp.require_session
 def get_pubuser(userid):
-  return 'todo: public page for user'
+  return flask.render_template('pubuser.htm',
+    pubuser=trustgraph.load_pubuser(userid),
+    username=flask.g.sesh.get('username'),
+  )
 
 @app.route('/legal')
 def get_legal():
