@@ -1,9 +1,76 @@
 {% set title='home' %}
 {% extends "base.htm" %}
+{% macro render_links(links) %}
+  <ol>
+  {% for link in links %}
+  <li>
+    <a href="{{ url_for('get_link', linkid=link.linkid) }}">{{ link.title }}</a>
+    by <a href="{{ url_for('get_pubuser', userid=link.userid) }}">{{ link.username }}</a>
+    at {{ link.created[:16] }}
+    ({{ link.assert_count }} asserts)
+  </li>
+  {% endfor %}
+  </ol>
+{% endmacro %}
 {% block content %}
 <div class="container">
-<div class="container">
-  <a href="/link">submit</a>
-</div>
+  <a href="/link">📤 submit</a>
+  <a href="/activity">📊 your activity</a>
+  <a href="/settings">⚙️ settings</a>
+  <hr>
+  <h2>Recent articles</h2>
+
+  <details open><summary class="h4">Globally popular</summary>
+    {% if global_articles %}
+      {{ render_links(global_articles) }}
+    {% else %}
+    <div class="alert alert-warning">No global activity; either this is a fresh install or something has gone badly wrong 😬</div>
+    {% endif %}
+  </details>
+
+  <details open><summary class="h4">Your posts</summary>
+    {% if articles.yours %}
+    {% else %}
+    <div class="alert alert-warning">No recent submissions from you</div>
+    {% endif %}
+  </details>
+
+  <details open><summary class="h4">People you vouch (1-hop)</summary>
+    {% if articles.hop1 %}
+    {% else %}
+    <div class="alert alert-warning">Empty</div>
+    {% endif %}
+  </details>
+
+  <details open><summary class="h4">People you vouch indirectly (2-hop)</summary>
+    {% if articles.hop2 %}
+    {% else %}
+    <div class="alert alert-warning">Empty</div>
+    {% endif %}
+  </details>
+
+  <details open><summary class="h4">People who vouch you (1-hop)</summary>
+    {% if articles.followers %}
+    {% else %}
+    <div class="alert alert-warning">Empty</div>
+    {% endif %}
+  </details>
+  <hr>
+
+  <h2>Requests for comment</h2>
+
+  <details open><summary class="h4">RFCs from people you vouch (1-hop)</summary>
+    {% if rfcs.upstream %}
+    {% else %}
+    <div class="alert alert-warning">Empty</div>
+    {% endif %}
+  </details>
+
+  <details open><summary class="h4">RFCs from people who vouch you (1-hop)</summary>
+    {% if rfcs.followers %}
+    {% else %}
+    <div class="alert alert-warning">Empty</div>
+    {% endif %}
+  </details>
 </div>
 {% endblock %}

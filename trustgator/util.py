@@ -32,6 +32,7 @@ class RateLimiter:
     return True
 
 UNIQUE_NAMES = []
+DEFAULT_CACHEID = 'global'
 
 def cache_wrapper(name: str, ttl_secs: int):
   "cache in redis"
@@ -39,9 +40,10 @@ def cache_wrapper(name: str, ttl_secs: int):
   UNIQUE_NAMES.append(name)
   def wrapper(inner):
     @functools.wraps(inner)
-    def outer(cacheid, *args, **kwargs):
+    def outer(*args, **kwargs):
+      cacheid = args[0] if args else DEFAULT_CACHEID
       if not flask.current_app: # is this some test suite case? booting up?
-        return inner(cacheid, *args, **kwargs)
+        return inner(*args, **kwargs)
       key = rapidjson.dumps({'name': name, 'id': cacheid}, sort_keys=True)
       probe = flask.current_app.redis_cache.get(key)
       if probe:
@@ -49,7 +51,7 @@ def cache_wrapper(name: str, ttl_secs: int):
         return rapidjson.loads(probe)
       # todo: stats.miss
       val = rapidjson.dumps(
-        inner(cacheid, *args, **kwargs),
+        inner(*args, **kwargs),
         uuid_mode=rapidjson.UM_CANONICAL,
         datetime_mode=rapidjson.DM_ISO8601,
       )
@@ -58,6 +60,6 @@ def cache_wrapper(name: str, ttl_secs: int):
     return outer
   return wrapper
 
-def clear_cache(name: str, cacheid):
+def clear_cache(name: str, cacheid=DEFAULT_CACHEID):
   key = rapidjson.dumps({'name': name, 'id': cacheid}, sort_keys=True)
   flask.current_app.redis_cache.delete(key)

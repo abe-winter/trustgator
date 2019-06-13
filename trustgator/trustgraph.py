@@ -65,3 +65,8 @@ def submit_vouch(form: dict):
   # note: only clear cache after the DB has validated the vouch above
   util.clear_cache('load_assertion', form['assertid'])
   return flask.redirect(flask.url_for('get_assert', linkid=form['assertid']))
+
+@util.cache_wrapper('global_articles', ttl_secs=util.CONF['redis_ttl'])
+def global_articles():
+  # note: this cache doesn't get cleared; this can be eventually consistent for perf reasons
+  return list(flask.current_app.queries.load_global_active(wide_count=100, narrow_count=10))

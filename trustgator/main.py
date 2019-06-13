@@ -48,7 +48,12 @@ def post_login():
 @app.route('/home')
 @flaskhelp.require_session
 def get_home():
-  return flask.render_template('home.htm', username=flask.g.sesh.get('username'))
+  return flask.render_template('home.htm',
+    articles={},
+    rfcs={},
+    global_articles=trustgraph.global_articles(),
+    username=flask.g.sesh.get('username'),
+  )
 
 # note: this is a POST so samesite cookie applies
 @app.route('/logout', methods=['POST'])
