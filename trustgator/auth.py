@@ -42,6 +42,7 @@ def create_acct(form: dict, login_also=False) -> dict:
       else:
         return {'sessionid': None, errors: []}
   except sa.exc.IntegrityError as err:
+    # pylint: disable=no-member
     if isinstance(err.orig, psycopg2.errors.UniqueViolation):
       print(err) # so logging picks it up
       return {'sessionid': None, 'errors': ['that username already exists']}
