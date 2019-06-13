@@ -1,4 +1,4 @@
-import statsd, varyaml, os, flask, functools, flask, rapidjson
+import statsd, varyaml, os, flask, functools, flask, rapidjson, collections, logging, time
 from datetime import datetime
 
 CONF = varyaml.load(open(os.environ.get('VARYAML', 'varyaml.yml')))
@@ -63,3 +63,43 @@ def cache_wrapper(name: str, ttl_secs: int):
 def clear_cache(name: str, cacheid=DEFAULT_CACHEID):
   key = rapidjson.dumps({'name': name, 'id': cacheid}, sort_keys=True)
   flask.current_app.redis_cache.delete(key)
+
+TimePair = collections.namedtuple('TimePair', 'time value')
+
+class Degrader:
+  "decorator to return a dummy response when a route is taking too long (for shedding load)"
+  def __init__(self, name, dummy, max_time=0.25, history=10, lookback_secs=30, stats=STATS):
+    self.name = name
+    self.dummy = dummy
+    self.max_time = max_time
+    assert history > 0
+    self.history = history
+    self.lookback_secs = lookback_secs
+    self.times = collections.deque()
+    self.stats = stats
+
+  def trim(self, now):
+    "remove old and over-limit elements from queue"
+    while len(self.times) > self.history:
+      self.times.popleft()
+    while self.times and now - self.times[0].time > self.lookback_secs:
+      self.times.popleft()
+
+  def over_limit(self):
+    return sum(pair.value for pair in self.times) > self.max_time
+
+  def __call__(self, wrapped):
+    "decorator"
+    @functools.wraps(wrapped)
+    def wrapper(*args, **kwargs):
+      t0 = time.time()
+      self.trim(t0)
+      if self.over_limit():
+        if self.stats: self.stats.incr(f'degrader.over.{self.name}', 1)
+        return self.dummy
+      if self.stats: self.stats.incr(f'degrader.under.{self.name}', 1)
+      ret = wrapped(*args, **kwargs)
+      now = time.time()
+      self.times.append(TimePair(now, now - t0))
+      return ret
+    return wrapper
