@@ -28,3 +28,15 @@ Users can 'vouch' for assertions that interest them. Vouches can be positive but
 ### RFCs
 
 (🚧🚧🚧 todo) Users can 'ping' their trust network with a request for comment. This alerts the network to look at an article and comment on it.
+
+## FAQs
+
+### Isn't this just twitter?
+
+Differences:
+
+* this uses 2-hop trust to show you content
+* the primary content is external links rather than user-authored tweets
+* negative vouches -- unlike twitter, our network includes disagreement
+* tagged expertise -- a single user account has different network trust scores for different topics
+* no 'reply' semantic -- TG users aren't directly responding to each other
