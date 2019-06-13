@@ -27,4 +27,4 @@ Users can 'vouch' for assertions that interest them. Vouches can be positive but
 
 ### RFCs
 
-Users can 'ping' their trust network with a request for comment. This alerts the network to look at an article and comment on it.
+(🚧🚧🚧 todo) Users can 'ping' their trust network with a request for comment. This alerts the network to look at an article and comment on it.
