@@ -6,3 +6,5 @@ create table if not exists invitations (
   created timestamp not null default now(),
   redeemed timestamp
 );
+
+create index if not exists invitations_code on invitations (code);
