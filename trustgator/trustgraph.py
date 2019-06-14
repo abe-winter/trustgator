@@ -74,7 +74,7 @@ def submit_vouch(form: dict):
 
 # todo: think about how to mix cache_wrapper and degrader; I don't want to include cache hit times in the degrader computation *but* I also don't want to cache timing errors (or do I)
 @util.cache_wrapper('global_articles', ttl_secs=util.CONF['redis_ttl'])
-@util.Degrader('2hop', {'items': [], 'error': "Load is too darn high! Skipping this"})
+@util.Degrader('global', {'items': [], 'error': "Load is too darn high! Skipping this"})
 def global_articles():
   # note: this cache doesn't get cleared; this can be eventually consistent for perf reasons
   return {
