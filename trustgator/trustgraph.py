@@ -2,8 +2,8 @@
 import flask, collections
 from . import util
 
-# stats timing and reject writes when system is busy
 # rate limit per user (use DB, make this one configurable)
+@util.STATS.timer('func.submit_link')
 def submit_link(form: dict):
   assert len(form['title']) < 400
   assert len(form['url']) < 4000
@@ -18,7 +18,7 @@ def submit_link(form: dict):
 
 # todo: crank up ttl_secs when system is busy
 @util.cache_wrapper('load_article', ttl_secs=util.CONF['redis_ttl'])
-# todo: stats timing here
+@util.STATS.timer('func.load_article')
 def load_article(linkid: str):
   "load link and related resources"
   link = flask.current_app.queries.load_link(linkid=linkid)

@@ -2,7 +2,7 @@
 
 import flask
 from . import flaskhelp, auth, trustgraph
-from .util import CONF
+from .util import CONF, STATS
 
 app = flask.Flask(__name__)
 app.secret_key = CONF['flask']['secret_key']
@@ -45,9 +45,9 @@ def get_login():
 def post_login():
   return auth.login(flask.request.form)
 
-# todo: timing stats
 @app.route('/home')
 @flaskhelp.require_session
+@STATS.timer('route.get_home')
 def get_home():
   return flask.render_template('home.htm',
     articles={

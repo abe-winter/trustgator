@@ -3,7 +3,7 @@ from datetime import datetime
 
 CONF = varyaml.load(open(os.environ.get('VARYAML', 'varyaml.yml')))
 
-STATS = statsd.StatsClient(prefix='tgtr.')
+STATS = statsd.StatsClient(prefix='tgtr.', host=CONF['stats_host'])
 
 def minute_floor(datetime_: datetime) -> datetime:
   return datetime(*datetime_.timetuple()[:5])
@@ -47,9 +47,9 @@ def cache_wrapper(name: str, ttl_secs: int):
       key = rapidjson.dumps({'name': name, 'id': cacheid}, sort_keys=True)
       probe = flask.current_app.redis_cache.get(key)
       if probe:
-        # todo: stats.hit
+        STATS.incr(f'cwrap.{name}.hit')
         return rapidjson.loads(probe)
-      # todo: stats.miss
+      STATS.incr(f'cwrap.{name}.miss')
       val = rapidjson.dumps(
         inner(*args, **kwargs),
         uuid_mode=rapidjson.UM_CANONICAL,
