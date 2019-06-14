@@ -37,3 +37,7 @@ PGPASSWORD=$DBPASS psql -U $DBUSER -h $DBHOST -f sql/migrate/*.sql
 ## Dev help
 
 * you can debug template evaluation with `helm install --debug --dry-run ./trustgator`
+
+## Misc things
+
+* to access the graphite in from helm, do `kubectl port-forward trustgator-graphite-0 8080:8080` and then hit localhost:8080 in a browser
