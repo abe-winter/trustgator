@@ -11,7 +11,7 @@ spec:
     port: 6379
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: &name {{ .Values.names.redis }}
   labels: &labels
@@ -21,16 +21,13 @@ spec:
   selector:
     matchLabels:
       app: *name
-  strategy:
-    rollingUpdate:
-      # workaround for the tiny beta box
-      maxUnavailable: 100%
+  serviceName: {{ .Values.names.redis }}-service
   template:
     metadata:
       labels: *labels
     spec:
       containers:
-      - name: trustgator
+      - name: redis
         image: redis:5.0.5
         ports:
         - containerPort: 6379
