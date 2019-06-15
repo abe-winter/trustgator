@@ -2,7 +2,17 @@
 {% extends "base.htm" %}
 {% block content %}
 <div class="container">
-  <h4><a href="{{ link.url }}">{{ link.title }}</a></h4>
+  <h4>
+    <a href="{{ link.url }}">{{ link.title }}</a>
+    <div class="h5 text-muted">{{ link.url }}</div>
+  </h4>
+  {% if deletable %}
+  <form method="POST" action="/link/del">
+    <input type="hidden" name="linkid" value="{{ link.linkid }}">
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <p class="form-text text-muted">You can delete for {{ delete_window }} minutes after posting</p>
+  </form>
+  {% endif %}
   <form method="POST" action="/assert">
     <input type="hidden" name="linkid" value="{{ link.linkid }}">
     <div class="form-group row">

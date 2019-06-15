@@ -14,7 +14,7 @@
   <ul>
   {% for link in pubuser.links %}
   <li>
-    <a href="{{ url_for('get_link', linkid=link.linkid) }}">{{ link.title }} {{ link.url }}</a> posted on {{ link.created[:16] }}
+    <a href="{{ url_for('get_link', linkid=link.linkid) }}">{{ link.title }}</a> posted {{ link.created[:16] }}
   </li>
   {% endfor %}
   </ul>

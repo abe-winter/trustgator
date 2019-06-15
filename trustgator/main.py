@@ -84,6 +84,8 @@ def get_link(linkid):
   dets = trustgraph.load_article(linkid)
   return flask.render_template('link.htm',
     username=flask.g.sesh.get('username'),
+    deletable=dets['age_seconds'] < CONF['delete_minutes']['link'] * 60,
+    delete_window=CONF['delete_minutes']['link'],
     **dets
   )
 
@@ -151,3 +153,8 @@ def get_invites():
 @flaskhelp.require_session
 def post_invites():
   return auth.issue_invite(flask.g.sesh['userid'])
+
+@app.route('/link/del', methods=['POST'])
+@flaskhelp.require_session
+def post_link_del():
+  return trustgraph.delete_link(flask.request.form)

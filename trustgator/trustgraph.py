@@ -1,5 +1,6 @@
 "trustgraph.py -- getters, setters and enumerators over the 2-hop graph"
 import flask, collections
+from datetime import datetime
 from . import util
 
 # rate limit per user (use DB, make this one configurable)
@@ -31,7 +32,7 @@ def load_article(linkid: str):
     vouch_dict[vouch['assertid']][vouch['score']] = vouch['count']
   for assert_ in asserts:
     assert_['vouches'] = sorted(vouch_dict.get(assert_['assertid'], {}).items())
-  return {'link': link, 'asserts': asserts}
+  return {'link': link, 'asserts': asserts, 'age_seconds': (datetime.now() - link['created']).total_seconds()}
 
 def submit_assert(form: dict):
   assert form['linkid']
@@ -131,3 +132,14 @@ def load_trustnet(userid: str):
     'incoming': list(queries.load_user_vouchers(userid=userid, limit=100)),
     'error': None,
   }
+
+def delete_link(form: dict):
+  assert form['linkid']
+  link = flask.current_app.queries.load_link(linkid=form['linkid'])
+  if not link:
+    flask.abort(404)
+  if str(link['userid']) != flask.g.sesh['userid']:
+    flask.abort(403)
+  if (datetime.now() - link['created']).total_seconds() < util.CONF['delete_minutes']['link'] * 60:
+    flask.current_app.queries.del_link(linkid=form['linkid'])
+  return flask.redirect(flask.url_for('get_home'))

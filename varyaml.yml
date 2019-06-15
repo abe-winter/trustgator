@@ -18,6 +18,10 @@ redis_ttl: 5
 redis_long_ttl: 60
 domain_name: $DOMAIN_NAME
 stats_host: $STATS_HOST
+delete_minutes:
+  link: 5
+  assert: 15
+  vouch: 30
 emails:
   ocilla: $OCILLA
 varyaml:
