@@ -1,0 +1,34 @@
+{% set title='overlay' %}
+{% extends "base.htm" %}
+{% block content %}
+<div class="container">
+  <h5>Trust overlay</h5>
+  <h4>
+    <a href="{{ link.url }}">{{ link.title }}</a>
+    <div class="h5 text-muted">{{ link.created[:16] }} - {{ link.url }}</div>
+  </h4>
+  <hr>
+  {% if not asserts %}
+  <div class="alert alert-warning">No assertions yet for this article -- you'll be the first</div>
+  {% else %}
+  <ul>
+  {% for assert_ in asserts %}
+    <li>
+      <span class="badge badge-secondary">{{ assert_.topic }}</span>
+      <a href="{{ url_for('get_assert', assertid=assert_.assertid) }}">{{ assert_.created.split('.')[0] }} by {{ assert_.username }}</a>
+      {% if assert_.deletable and assert_.userid == userid %}
+      <form method="POST" action="/assert/del">
+        <input type="hidden" name="assertid" value="{{ assert_.assertid }}">
+        <button class="btn btn-danger" type="submit">Delete</button>
+      <form>
+      {% endif %}
+      <p>{{ assert_.claim }}</p>
+      {% if assert_.vouches %}
+      <p>Vouch counts: {{ assert_.vouches}}</p>
+      {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endblock %}

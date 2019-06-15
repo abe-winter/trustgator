@@ -38,11 +38,19 @@ Users can 'vouch' for assertions that interest them. Vouches can be positive but
 
 Differences:
 
-* this uses 2-hop trust to show you content (twitter is 1-hop follow)
+* this uses 2-hop trust to show you content (twitter is 1-hop follow, although the retweet model acts sometimes like a two-hop system)
 * the primary content is external links rather than user-authored tweets
 * negative vouches -- unlike twitter, our network includes disagreement
 * tagged expertise -- a single user account has different network trust scores for different topics
 * no 'reply' semantic -- TG users aren't directly responding to each other
+
+### Why does 2nd-degree trust matter?
+
+* It gives you access to information from useful strangers who are trusted by your group
+* Bad 2-hop information can affect how you trust your 1-hop group; if you tend to give negative vouches to users downstream of a user you follow directly, that can weight down the score of the direct-followed user
+* Most systems have these concepts built in as recommmendation systems; amazon has been doing it since the 90s with collaborative filtering, which tries to fit you into. TG is designed to make multihop connections explicit and useful to the user.
+
+The trust network features are a work in progress.
 
 ## Todo
 

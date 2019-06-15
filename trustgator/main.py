@@ -27,7 +27,6 @@ def vitals():
 @app.route('/join')
 def get_join():
   return flask.send_from_directory(app.static_folder, 'join.htm')
-  raise NotImplementedError
 
 @app.route('/join', methods=['POST'])
 def post_join():
@@ -87,6 +86,15 @@ def get_link(linkid):
     userid=flask.g.sesh['userid'],
     deletable=flask.g.sesh['userid'] == dets['link']['userid'] and dets['age_seconds'] < CONF['delete_minutes']['link'] * 60,
     delete_window=CONF['delete_minutes']['link'],
+    **dets
+  )
+
+@app.route('/overlay/<linkid>')
+@flaskhelp.require_session
+def get_overlay(linkid):
+  dets = trustgraph.load_overlay(linkid)
+  return flask.render_template('overlay.htm',
+    username=flask.g.sesh.get('username'),
     **dets
   )
 

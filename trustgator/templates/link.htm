@@ -25,6 +25,11 @@
     </div>
     <button type="submit" class="btn btn-primary">Assert</button>
   </form>
+  <br>
+  <p class="h5">
+    <a href="{{ url_for('get_overlay', linkid=link.linkid) }}">View trust overlay</a>
+    <small class="text-muted">This will mark up assertions based on how you've vouched for them</small>
+  </p>
   <hr>
   {% if not asserts %}
   <div class="alert alert-warning">No assertions yet for this article -- you'll be the first</div>
