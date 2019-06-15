@@ -29,7 +29,9 @@
   <a href="{{ url_for('get_pubuser', userid=userid) }}">📊 your activity</a>
   <a href="/trustnet">🕸️ your network</a>
   <a href="/settings">⚙️ settings</a>
+  {% if show_invites %}
   <a href="/invites">💌 invitation</a>
+  {% endif %}
   <hr>
   <h2>Recent articles</h2>
 

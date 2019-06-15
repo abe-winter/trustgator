@@ -59,3 +59,4 @@ The trust network features are a work in progress.
 * the queries in trustgraph.py
 * the helper functions / classes in util (Degraded class, cache_wrapper decorator)
 * signup logic (esp invite code state space)
+* is_invitee

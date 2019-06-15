@@ -47,7 +47,7 @@ def create_acct(form: dict, login_also=False) -> dict:
           raise InviteCodeFailure("invite code already used")
         queries.use_invite(code=form['invite_code'], userid=str(ret['userid']))
         # todo: make sure updated row count is 1 above
-      dets = {'username': form['username'], 'userid': str(ret['userid'])}
+      dets = {'username': form['username'], 'userid': str(ret['userid']), 'admin': ret['admin']}
       # todo: stat
       if login_also:
         return {'sessionid': create_session(dets), 'errors': []}
@@ -72,6 +72,7 @@ def login(form: dict) -> str:
   sessionid = create_session({
     'userid': row['userid'],
     'username': row['username'],
+    'admin': row['admin'],
   })
   # todo: stat
   flask.session['sessionid'] = sessionid
@@ -84,7 +85,10 @@ def logout():
 
 def issue_invite(issuing_user: str, ignore_max=False, queries=None):
   "ignore_max is for manually granting these to power users"
-  queries = queries or flask.current_app.queries
+  if not queries: # i.e. if not in shell context
+    if not invites_allowed():
+      return "Sorry, this server has invites.restrict = true"
+    queries = flask.current_app.queries
   with queries.transaction():
     if not ignore_max:
       ninvites = len(list(queries.get_invites(userid=issuing_user)))
@@ -93,3 +97,8 @@ def issue_invite(issuing_user: str, ignore_max=False, queries=None):
     code = binascii.hexlify(os.urandom(5)).decode('ascii')
     queries.insert_invite(userid=issuing_user, code=code)
   return flask.redirect(flask.url_for('get_invites'))
+
+def invites_allowed() -> bool:
+  return flask.g.sesh.get('admin') \
+    or not util.CONF['invites']['restrict'] \
+    or bool(flask.current_app.queries.is_invitee(userid=flask.g.sesh['userid'])['count'])
