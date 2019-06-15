@@ -30,8 +30,10 @@ def load_article(linkid: str):
   vouch_dict = collections.defaultdict(dict)
   for vouch in vouches:
     vouch_dict[vouch['assertid']][vouch['score']] = vouch['count']
+  now = datetime.now()
   for assert_ in asserts:
     assert_['vouches'] = sorted(vouch_dict.get(assert_['assertid'], {}).items())
+    assert_['deletable'] = (now - assert_['created']).total_seconds() < 60 * util.CONF['delete_minutes']['assert']
   return {'link': link, 'asserts': asserts, 'age_seconds': (datetime.now() - link['created']).total_seconds()}
 
 def submit_assert(form: dict):
@@ -140,6 +142,24 @@ def delete_link(form: dict):
     flask.abort(404)
   if str(link['userid']) != flask.g.sesh['userid']:
     flask.abort(403)
-  if (datetime.now() - link['created']).total_seconds() < util.CONF['delete_minutes']['link'] * 60:
-    flask.current_app.queries.del_link(linkid=form['linkid'])
+  if (datetime.now() - link['created']).total_seconds() > util.CONF['delete_minutes']['link'] * 60:
+    return 'too late to delete this'
+  flask.current_app.queries.del_link(linkid=form['linkid'])
+  util.clear_cache('load_article', form['linkid'])
+  util.clear_cache('load_pubuser', flask.g.sesh['userid'])
   return flask.redirect(flask.url_for('get_home'))
+
+def delete_assert(form: dict):
+  assert form['assertid']
+  assert_ = flask.current_app.queries.get_assert(assertid=form['assertid'])
+  if not assert_:
+    flask.abort(404)
+  if str(assert_['userid']) != flask.g.sesh['userid']:
+    flask.abort(403)
+  if (datetime.now() - assert_['created']).total_seconds() > util.CONF['delete_minutes']['assert'] * 60:
+    return 'too late to delete this'
+  flask.current_app.queries.del_assert(assertid=form['assertid'])
+  util.clear_cache('load_article', str(assert_['linkid']))
+  util.clear_cache('load_assertion', form['assertid'])
+  util.clear_cache('load_pubuser', flask.g.sesh['userid'])
+  return flask.redirect(flask.url_for('get_link', linkid=assert_['linkid']))

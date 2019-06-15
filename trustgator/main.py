@@ -158,3 +158,8 @@ def post_invites():
 @flaskhelp.require_session
 def post_link_del():
   return trustgraph.delete_link(flask.request.form)
+
+@app.route('/assert/del', methods=['POST'])
+@flaskhelp.require_session
+def post_assert_del():
+  return trustgraph.delete_assert(flask.request.form)
