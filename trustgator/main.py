@@ -84,7 +84,8 @@ def get_link(linkid):
   dets = trustgraph.load_article(linkid)
   return flask.render_template('link.htm',
     username=flask.g.sesh.get('username'),
-    deletable=dets['age_seconds'] < CONF['delete_minutes']['link'] * 60,
+    userid=flask.g.sesh['userid'],
+    deletable=flask.g.sesh['userid'] == dets['link']['userid'] and dets['age_seconds'] < CONF['delete_minutes']['link'] * 60,
     delete_window=CONF['delete_minutes']['link'],
     **dets
   )

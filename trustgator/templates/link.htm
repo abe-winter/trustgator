@@ -34,7 +34,7 @@
     <li>
       <span class="badge badge-secondary">{{ assert_.topic }}</span>
       <a href="{{ url_for('get_assert', assertid=assert_.assertid) }}">{{ assert_.created.split('.')[0] }} by {{ assert_.username }}</a>
-      {% if assert_.deletable %}
+      {% if assert_.deletable and assert_.userid == userid %}
       <form method="POST" action="/assert/del">
         <input type="hidden" name="assertid" value="{{ assert_.assertid }}">
         <button class="btn btn-danger" type="submit">Delete</button>
