@@ -38,19 +38,29 @@ Users can 'vouch' for assertions that interest them. Vouches can be positive but
 
 Differences:
 
-* this uses 2-hop trust to show you content (twitter is 1-hop follow, although the retweet model acts sometimes like a two-hop system)
+* this uses 2-hop trust to show you content (twitter is 1-hop follow, although the retweet model and suggested accoutns are sometimes like a two-hop system)
 * the primary content is external links rather than user-authored tweets
 * negative vouches -- unlike twitter, our network includes disagreement
 * tagged expertise -- a single user account has different network trust scores for different topics
-* no 'reply' semantic -- TG users aren't directly responding to each other
 
-### Why does 2nd-degree trust matter?
+### What is the 2-hop trust model?
 
-* It gives you access to information from useful strangers who are trusted by your group
-* Bad 2-hop information can affect how you trust your 1-hop group; if you tend to give negative vouches to users downstream of a user you follow directly, that can weight down the score of the direct-followed user
-* Most systems have these concepts built in as recommmendation systems; amazon has been doing it since the 90s with collaborative filtering, which tries to fit you into. TG is designed to make multihop connections explicit and useful to the user.
+Every product that makes suggestions to you has an implicit model of multi-hop trust. For example:
 
-The trust network features are a work in progress.
+* twitter suggests who to follow based on who you follow
+* G rewrites your search terms based on other people's behavior
+* amzn 'collaborative filtering' is the oldest trick in the book -- suggest more purchases based on your browse purchase behavior
+
+**All of these are implicit**. Trustgator is **explicit** in that it:
+
+* Doesn't extend beyond the second hop, i.e. 'friends of friends'. ML-based products will typically train on the entire community.
+* Distinguishes 1-hop content from 2-hop content, i.e. distinguishes people you acted to include vs people you reached through the network.
+
+All 'suggestion' products are making a compromise between 'discovery' (access to interesting or useful things) and 'trust' (fairness / accuracy of a news article, validity of an opinion, honesty of a review).
+
+Trustgator is an experiment to make that compromise more transparent by overlaying your trust network on the UX and explaining the origin of suggestions.
+
+My thesis is that people are dumb at evaluating the validity of blind recommendations but smart at understanding when questionable content all comes via a certain person.
 
 ## Todo
 
@@ -59,4 +69,3 @@ The trust network features are a work in progress.
 * the queries in trustgraph.py
 * the helper functions / classes in util (Degraded class, cache_wrapper decorator)
 * signup logic (esp invite code state space)
-* is_invitee
