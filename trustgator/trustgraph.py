@@ -36,16 +36,22 @@ def load_article(linkid: str):
     assert_['deletable'] = (now - assert_['created']).total_seconds() < 60 * util.CONF['delete_minutes']['assert']
   return {'link': link, 'asserts': asserts, 'age_seconds': (now - link['created']).total_seconds()}
 
-@util.cache_wrapper('load_overlay', ttl_secs=1)
-@util.STATS.timer('func.load_overlay')
+@util.cache_wrapper('load_overlay', ttl_secs=1) # todo: long_ttl
+@util.Degrader('trustnet', {'error': "Load is too darn high! Skipping this"})
 def load_overlay(linkid: str):
   "load asserts in graph context"
-  link = flask.current_app.queries.load_link(linkid=linkid)
+  queries = flask.current_app.queries
+  link = queries.load_link(linkid=linkid)
   if not link:
     flask.abort(404)
   # for users asserting on this article, get your vouch history x their topics
   # also pull 2nd-degree
-  return {'link': link}
+  userid = flask.g.sesh['userid']
+  return {
+    'link': link,
+    'hop1': queries.link_overlay_1hop(linkid=linkid, userid=userid),
+    'hop2': queries.link_overlay_2hop(linkid=linkid, userid=userid),
+  }
 
 def submit_assert(form: dict):
   assert form['linkid']

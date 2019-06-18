@@ -2,33 +2,34 @@
 {% extends "base.htm" %}
 {% block content %}
 <div class="container">
-  <h5>Trust overlay</h5>
+<h5>Trust overlay</h5>
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% else %}
   <h4>
     <a href="{{ link.url }}">{{ link.title }}</a>
     <div class="h5 text-muted">{{ link.created[:16] }} - {{ link.url }}</div>
   </h4>
   <hr>
+  <div class="alert alert-warning">🚧 <b>todo</b> link to an explanation of how these scores are calculated</div>
+  {% for name, group, asserts in (('1-hop', 'Your', hop1), ('2-hop', "Your network's", hop2)) %}
+  <div class="h4">{{ name }}</div>
   {% if not asserts %}
-  <div class="alert alert-warning">No assertions yet for this article -- you'll be the first</div>
+  <div class="alert alert-warning">Empty: no assertions in your {{ name }} network</div>
   {% else %}
   <ul>
   {% for assert_ in asserts %}
     <li>
       <span class="badge badge-secondary">{{ assert_.topic }}</span>
       <a href="{{ url_for('get_assert', assertid=assert_.assertid) }}">{{ assert_.created.split('.')[0] }} by {{ assert_.username }}</a>
-      {% if assert_.deletable and assert_.userid == userid %}
-      <form method="POST" action="/assert/del">
-        <input type="hidden" name="assertid" value="{{ assert_.assertid }}">
-        <button class="btn btn-danger" type="submit">Delete</button>
-      <form>
-      {% endif %}
+      <br>
+      <span style="color: {{ 'blue' if assert_.avg_score > 0 else 'red' if assert_.avg_score < 0 else 'inherit' }}">{{ group }} average vouch {{ assert_.avg_score }}</span>
       <p>{{ assert_.claim }}</p>
-      {% if assert_.vouches %}
-      <p>Vouch counts: {{ assert_.vouches}}</p>
-      {% endif %}
     </li>
   {% endfor %}
   </ul>
   {% endif %}
+  {% endfor %}
+{% endif %}{# if error #}
 </div>
 {% endblock %}

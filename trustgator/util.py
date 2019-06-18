@@ -41,21 +41,23 @@ def cache_wrapper(name: str, ttl_secs: int):
   def wrapper(inner):
     @functools.wraps(inner)
     def outer(*args, **kwargs):
+      t0 = time.time()
       cacheid = args[0] if args else DEFAULT_CACHEID
       if not flask.current_app: # is this some test suite case? booting up?
         return inner(*args, **kwargs)
       key = rapidjson.dumps({'name': name, 'id': cacheid}, sort_keys=True)
       probe = flask.current_app.redis_cache.get(key)
       if probe:
-        STATS.incr(f'cwrap.{name}.hit')
+        STATS.timer(f'cwrap.{name}.hit', time.time() - t0)
         return rapidjson.loads(probe)
-      STATS.incr(f'cwrap.{name}.miss')
       val = rapidjson.dumps(
         inner(*args, **kwargs),
         uuid_mode=rapidjson.UM_CANONICAL,
         datetime_mode=rapidjson.DM_ISO8601,
+        number_mode=rapidjson.NM_DECIMAL,
       )
       flask.current_app.redis_cache.set(key, val, ex=ttl_secs)
+      STATS.timer(f'cwrap.{name}.miss', time.time() - t0)
       return rapidjson.loads(val)
     return outer
   return wrapper
