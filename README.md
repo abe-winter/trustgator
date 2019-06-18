@@ -62,10 +62,20 @@ Trustgator is an experiment to make that compromise more transparent by overlayi
 
 My thesis is that people are dumb at evaluating the validity of blind recommendations but smart at understanding when questionable content all comes via a certain person.
 
-## Todo
+## Two-hop trust screenshot
+
+This is an example of the 'trust overlay', a view of an article's comment activity that contextualizes it in how you and your vouchees have vouched the commenters.
+
+![trust overlay screenshot](./logo/trust-overlay.png)
+
+## Todo / help wanted
 
 ### Write tests for
 
 * the queries in trustgraph.py
 * the helper functions / classes in util (Degraded class, cache_wrapper decorator)
 * signup logic (esp invite code state space)
+
+### Design
+
+* Could use a security audit, particulary w.r.t kube / helm setup

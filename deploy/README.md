@@ -34,7 +34,7 @@ PGPASSWORD=$DBPASS psql -U $DBUSER -h $DBHOST -f sql/migrate/*.sql
 1. `helm repo add kiwigrid https://kiwigrid.github.io` (ugh -- why isn't this automatic from requirements.yaml? bitrot)
 1. install the chart with `helm install -f trustgator/values_gke_headsdown_us-east1-b_headsdown.yaml --name trustgator ./trustgator`
 
-## Dev help
+## Dev tricks
 
 * you can debug template evaluation with `helm install --debug --dry-run ./trustgator`
 
