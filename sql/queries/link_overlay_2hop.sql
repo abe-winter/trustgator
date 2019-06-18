@@ -17,4 +17,5 @@ indirect_vouchees as (
 select A.*, U.username, avg_score from assertions A
   join users U using (userid)
   join indirect_vouchees V using (userid)
+  where linkid = :linkid
   order by A.created;
