@@ -12,6 +12,7 @@ app.before_first_request(flaskhelp.setup_redis)
 app.config.update(
   SESSION_COOKIE_SECURE=CONF['mode'] != 'local',
   SESSION_COOKIE_HTTPONLY=True,
+  # note: lax mode means all state-changing routes have to be non-GET
   SESSION_COOKIE_SAMESITE='Lax',
 )
 
