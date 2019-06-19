@@ -1,7 +1,7 @@
 "trustgraph.py -- getters, setters and enumerators over the 2-hop graph"
 import flask, collections
 from datetime import datetime
-from . import util
+from . import util, auth
 
 # rate limit per user (use DB, make this one configurable)
 @util.STATS.timer('func.submit_link')
@@ -9,6 +9,8 @@ def submit_link(form: dict):
   assert len(form['title']) < 400
   assert len(form['url']) < 4000
   userid = flask.g.sesh['userid']
+  if not auth.submit_allowed():
+    return 'Sorry -- this server has gate_submits on, which means you need to get one vouch to submit links (or be an admin)'
   ret = flask.current_app.queries.insert_link(
     userid=userid,
     title=form['title'],

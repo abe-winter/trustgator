@@ -73,8 +73,9 @@ This is an example of the 'trust overlay', a view of an article's comment activi
 ### Write tests for
 
 * the queries in trustgraph.py
-* the helper functions / classes in util (Degraded class, cache_wrapper decorator)
+* the helper functions / classes in util (Degraded class, cache\_wrapper decorator)
 * signup logic (esp invite code state space)
+* capability switches in auth.py (invite\_allowed / submit\_allowed)
 
 ### Design
 

@@ -15,6 +15,8 @@ invites:
   max_per_user: 5
   # invites.restrict means that only invitees can send invites
   restrict: true
+# gate_submits means that you have to be an invitee or have a vouched assert before you can submit an article
+gate_submits: true
 redis_ttl: 5
 # long_ttl is for individual users hitting their own stuff slowly (vs many users hitting one global resource)
 redis_long_ttl: 60

@@ -60,6 +60,7 @@ def get_home():
     userid=flask.g.sesh.get('userid'),
     username=flask.g.sesh.get('username'),
     show_invites=auth.invites_allowed(),
+    show_submit=auth.submit_allowed(),
   )
 
 # note: this is a POST so samesite cookie applies

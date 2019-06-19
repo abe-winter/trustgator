@@ -102,3 +102,11 @@ def invites_allowed() -> bool:
   return flask.g.sesh.get('admin') \
     or not util.CONF['invites']['restrict'] \
     or bool(flask.current_app.queries.is_invitee(userid=flask.g.sesh['userid'])['count'])
+
+def submit_allowed() -> bool:
+  queries = flask.current_app.queries
+  userid = flask.g.sesh['userid']
+  return flask.g.sesh.get('admin') \
+    or not util.CONF.get('gate_submits') \
+    or bool(queries.ever_vouched(userid=userid)['count']) \
+    or bool(queries.is_invitee(userid=userid)['count'])
