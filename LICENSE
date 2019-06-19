@@ -1,0 +1,7 @@
+The code in this project is licensed under the GPLv3 (todo link).
+
+All trademarks, graphical assets and brand marks (including the name 'Trustgator' and the gator depicted in gator.png) are the exclusive property of Abe Winter and may not be used publicly without permission.
+
+You may operate your own trustgator instance and describe it as 'a trustgator' (but not *the* trustgator) as long as your fork is open source. If your fork has worse privacy guarantees than the main codebase you must *either* make those changes clear to the user in the signup process *or* not use the trustgator name anywhere on your site.
+
+I may in my sole discretion change the license to MIT in the future.
