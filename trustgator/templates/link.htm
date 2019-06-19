@@ -30,6 +30,10 @@
     <a href="{{ url_for('get_overlay', linkid=link.linkid) }}">View trust overlay</a>
     <small class="text-muted">This will mark up assertions based on how you've vouched for them</small>
   </p>
+  <a href="{{ url_for('get_flag', linkid=link.linkid) }}" class="btn btn-warning">🚨 Flag article ...</a>
+  {% if flag_count %}
+  <a href="{{ url_for('get_flags', linkid=link.linkid) }}">{{ flag_count }} flags</a>
+  {% endif %}
   <hr>
   {% if not asserts %}
   <div class="alert alert-warning">No assertions yet for this article -- you'll be the first</div>

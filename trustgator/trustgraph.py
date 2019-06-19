@@ -24,11 +24,12 @@ def submit_link(form: dict):
 @util.STATS.timer('func.load_article')
 def load_article(linkid: str):
   "load link and related resources"
-  link = flask.current_app.queries.load_link(linkid=linkid)
+  queries = flask.current_app.queries
+  link = queries.load_link(linkid=linkid)
   if not link:
     flask.abort(404)
-  asserts = list(flask.current_app.queries.load_link_asserts(linkid=linkid))
-  vouches = flask.current_app.queries.load_vouch_counts(assertids=[assert_['assertid'] for assert_ in asserts])
+  asserts = list(queries.load_link_asserts(linkid=linkid))
+  vouches = queries.load_vouch_counts(assertids=[assert_['assertid'] for assert_ in asserts])
   vouch_dict = collections.defaultdict(dict)
   for vouch in vouches:
     vouch_dict[vouch['assertid']][vouch['score']] = vouch['count']
@@ -36,7 +37,8 @@ def load_article(linkid: str):
   for assert_ in asserts:
     assert_['vouches'] = sorted(vouch_dict.get(assert_['assertid'], {}).items())
     assert_['deletable'] = (now - assert_['created']).total_seconds() < 60 * util.CONF['delete_minutes']['assert']
-  return {'link': link, 'asserts': asserts, 'age_seconds': (now - link['created']).total_seconds()}
+  flag_count = queries.link_flag_count(linkid=linkid)['count']
+  return {'link': link, 'asserts': asserts, 'age_seconds': (now - link['created']).total_seconds(), 'flag_count': flag_count}
 
 @util.cache_wrapper('load_overlay', ttl_secs=1) # todo: long_ttl
 @util.Degrader('trustnet', {'error': "Load is too darn high! Skipping this"})
@@ -182,3 +184,14 @@ def delete_assert(form: dict):
   util.clear_cache('load_assertion', form['assertid'])
   util.clear_cache('load_pubuser', flask.g.sesh['userid'])
   return flask.redirect(flask.url_for('get_link', linkid=assert_['linkid']))
+
+def flag_link(linkid: str, form: dict):
+  assert form['category'] in ('law', 'policy')
+  assert form['which'] and len(form['which']) < 1000
+  flask.current_app.queries.flag_link(
+    linkid=linkid,
+    userid=flask.g.sesh['userid'],
+    category=form['category'],
+    detail=form['which']
+  )
+  return flask.redirect(flask.url_for('get_link', linkid=linkid))

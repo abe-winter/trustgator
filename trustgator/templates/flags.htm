@@ -1,0 +1,22 @@
+{% set title='flags for '+kind %}
+{% extends "base.htm" %}
+{% block content %}
+<div class="container">
+  <div class="h3">🚨 Flags</div>
+  {% if kind == 'link' %}
+  <p>Flags for {{ kind }} <a href="{{ url_for('get_link', linkid=link.linkid) }}">{{ link.title }}</a>.</p>
+  {% endif %}
+  <hr>
+  <table class="table">
+  <tr><th>user</th><th>category</th><th>detail</th><th>created</th></tr>
+  {% for flag in flags %}
+  <tr>
+    <td><a href="{{ url_for('get_pubuser', userid=flag.userid) }}">{{ flag.username }}</a></td>
+    <td>{{ flag.category }}</td>
+    <td>{{ flag.detail }}</td>
+    <td>{{ flag.created.strftime('%Y/%m/%d %H:%M') }}</td>
+  </tr>
+  {% endfor %}
+  </table>
+</div>
+{% endblock %}

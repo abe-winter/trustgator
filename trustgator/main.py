@@ -175,3 +175,38 @@ def post_link_del():
 @flaskhelp.require_session
 def post_assert_del():
   return trustgraph.delete_assert(flask.request.form)
+
+@app.route('/link/flag/<linkid>')
+@flaskhelp.require_session
+def get_flag(linkid):
+  return flask.render_template('flag.htm',
+    link=flask.current_app.queries.load_link(linkid=linkid),
+    username=flask.g.sesh.get('username'),
+    kind='link',
+  )
+
+@app.route('/link/flags/<linkid>')
+@flaskhelp.require_session
+def get_flags(linkid):
+  queries = flask.current_app.queries
+  return flask.render_template('flags.htm',
+    link=queries.load_link(linkid=linkid),
+    username=flask.g.sesh.get('username'),
+    flags=queries.link_flags(linkid=linkid),
+    kind='link',
+  )
+
+@app.route('/link/flag/<linkid>', methods=['POST'])
+@flaskhelp.require_session
+def post_flag(linkid):
+  return trustgraph.flag_link(linkid, flask.request.form)
+
+@app.route('/assert/flag/<assertid>')
+@flaskhelp.require_session
+def get_flag_assert(assertid):
+  raise NotImplementedError
+
+@app.route('/assert/flag/<assertid>', methods=['POST'])
+@flaskhelp.require_session
+def post_flag_assert(assertid):
+  raise NotImplementedError

@@ -1,0 +1,25 @@
+{% set title='flag '+kind %}
+{% extends "base.htm" %}
+{% block content %}
+<div class="container">
+  <div class="h3">🚨 Flag {{ kind }}</div>
+  {% if kind == 'link' %}
+  <p>You're about to flag <a href="{{ url_for('get_link', linkid=link.linkid) }}">{{ link.title }}</a>. Flagging is a way to call attention to conditions that expose this site to legal risk. Warning: flags are public and attached to your username.</p>
+  {% endif %}
+  <hr>
+  <form method="POST">
+    <div class="form-group">
+      Do you think this {{ kind }} violates:
+      <br>
+      <label><input type="radio" name="category" value="law"> The law</label>
+      <br>
+      <label><input type="radio" name="category" value="policy"> Site policies</label>
+    </div>
+    <div class="form-group">
+      <label>Which law or policy?</label>
+      <input type="text" class="form-control" name="which" placeholder="which law or policy">
+    </div>
+    <button type="submit" class="btn btn-warning">Flag this {{ kind }}</button>
+  </form>
+</div>
+{% endblock %}
