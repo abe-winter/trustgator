@@ -16,10 +16,16 @@ app.config.update(
   SESSION_COOKIE_SAMESITE='Lax',
 )
 
+RENDERED = {
+  'splash': app.jinja_env.get_or_select_template('splash.htm').render(),
+  'join': app.jinja_env.get_or_select_template('join.htm').render(),
+  'login': app.jinja_env.get_or_select_template('login.htm').render(),
+}
+
 @app.route('/beta-splash')
 @app.route('/')
 def splash():
-  return flask.send_from_directory(app.static_folder, 'splash.htm')
+  return RENDERED['splash']
 
 @app.route('/vitals')
 def vitals():
@@ -28,7 +34,7 @@ def vitals():
 
 @app.route('/join')
 def get_join():
-  return flask.send_from_directory(app.static_folder, 'join.htm')
+  return RENDERED['join']
 
 @app.route('/join', methods=['POST'])
 def post_join():
@@ -40,7 +46,7 @@ def post_join():
 
 @app.route('/login')
 def get_login():
-  return flask.send_from_directory(app.static_folder, 'login.htm')
+  return RENDERED['login']
 
 @app.route('/login', methods=['POST'])
 def post_login():
@@ -59,7 +65,6 @@ def get_home():
     },
     rfcs={},
     userid=flask.g.sesh.get('userid'),
-    username=flask.g.sesh.get('username'),
     show_invites=auth.invites_allowed(),
     show_submit=auth.submit_allowed(),
   )
@@ -74,7 +79,7 @@ def post_logout():
 @app.route('/link')
 @flaskhelp.require_session
 def get_addlink():
-  return flask.render_template('submit-link.htm', username=flask.g.sesh.get('username'))
+  return flask.render_template('submit-link.htm')
 
 @app.route('/link', methods=['POST'])
 @flaskhelp.require_session
@@ -86,7 +91,6 @@ def post_link():
 def get_link(linkid):
   dets = trustgraph.load_article(linkid)
   return flask.render_template('link.htm',
-    username=flask.g.sesh.get('username'),
     userid=flask.g.sesh['userid'],
     deletable=flask.g.sesh['userid'] == dets['link']['userid'] and dets['age_seconds'] < CONF['delete_minutes']['link'] * 60,
     delete_window=CONF['delete_minutes']['link'],
@@ -98,10 +102,7 @@ def get_link(linkid):
 @flaskhelp.require_session
 def get_overlay(linkid):
   dets = trustgraph.load_overlay(linkid)
-  return flask.render_template('overlay.htm',
-    username=flask.g.sesh.get('username'),
-    **dets
-  )
+  return flask.render_template('overlay.htm', **dets)
 
 @app.route('/assert', methods=['POST'])
 @flaskhelp.require_session
@@ -116,7 +117,6 @@ def get_assert(assertid):
     assert_=assert_,
     vouches=vouches,
     vouch_counts=vouch_counts,
-    username=flask.g.sesh.get('username'),
     your_vouch=next((vouch for vouch in vouches if vouch['userid'] == flask.g.sesh['userid']), None),
   )
 
@@ -130,7 +130,6 @@ def post_vouch():
 def get_pubuser(userid):
   return flask.render_template('pubuser.htm',
     pubuser=trustgraph.load_pubuser(userid),
-    username=flask.g.sesh.get('username'),
   )
 
 @app.route('/legal')
@@ -142,26 +141,20 @@ def get_legal():
 @app.route('/settings')
 @flaskhelp.require_session
 def get_settings():
-  return flask.render_template('settings.htm',
-    username=flask.g.sesh.get('username'),
-  )
+  return flask.render_template('settings.htm')
 
 @app.route('/trustnet')
 @flaskhelp.require_session
 def get_trustnet():
   return flask.render_template('trustnet.htm',
     net=trustgraph.load_trustnet(flask.g.sesh['userid']),
-    username=flask.g.sesh.get('username'),
   )
 
 @app.route('/invites')
 @flaskhelp.require_session
 def get_invites():
   invites = list(flask.current_app.queries.get_invites(userid=flask.g.sesh['userid']))
-  return flask.render_template('invites.htm',
-    invites=invites,
-    username=flask.g.sesh.get('username'),
-  )
+  return flask.render_template('invites.htm', invites=invites)
 
 @app.route('/invites', methods=['POST'])
 @flaskhelp.require_session
@@ -183,7 +176,6 @@ def post_assert_del():
 def get_flag(linkid):
   return flask.render_template('flag.htm',
     link=flask.current_app.queries.load_link(linkid=linkid),
-    username=flask.g.sesh.get('username'),
     kind='link',
   )
 
@@ -193,7 +185,6 @@ def get_flags(linkid):
   queries = flask.current_app.queries
   return flask.render_template('flags.htm',
     link=queries.load_link(linkid=linkid),
-    username=flask.g.sesh.get('username'),
     flags=queries.link_flags(linkid=linkid),
     kind='link',
   )

@@ -8,6 +8,6 @@
   {% block head %}{% endblock %}
 </head>
 <body>
-{{ header(title, username) }}
+{{ header(title, g and g.sesh.get('username') or None) }}
 {% block content %}{% endblock %}
 </body>

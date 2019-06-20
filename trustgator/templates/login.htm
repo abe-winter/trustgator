@@ -1,0 +1,15 @@
+{% set title='login' %}
+{% extends "base.htm" %}
+{% block content %}
+<div class="container">
+<h3>⭐ Login</h3>
+
+<form method="POST">
+  <label>Username <input type="text" class="form-control" name="username" placeholder="username" required></label>
+  <br>
+  <label>Password <input type="password" class="form-control" name="password" placeholder="password" required></label>
+  <br>
+  <button type="submit" class="btn btn-primary">Login</button>
+</form>
+</div>
+{% endblock %}

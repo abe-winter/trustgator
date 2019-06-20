@@ -1,19 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>trustgator splash</title>
-</head>
-<body>
-
-<nav aria-label="breadcrumb">
-  <div class="breadcrumb">
-    <div class="breadcrumb-item"><a href="/">🐊 trustgator</a></div>
-    <div class="breadcrumb-item active">join</div>
-  </div>
-</nav>
-
+{% set title='join' %}
+{% extends "base.htm" %}
+{% block content %}
 <div class="container">
 <h3>⭐ Create account</h3>
 
@@ -37,5 +24,4 @@
 </form>
 
 </div>
-<body>
-</html>
+{% endblock %}
