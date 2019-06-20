@@ -90,6 +90,7 @@ def get_link(linkid):
     userid=flask.g.sesh['userid'],
     deletable=flask.g.sesh['userid'] == dets['link']['userid'] and dets['age_seconds'] < CONF['delete_minutes']['link'] * 60,
     delete_window=CONF['delete_minutes']['link'],
+    can_flag=auth.submit_allowed(),
     **dets
   )
 

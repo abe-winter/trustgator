@@ -188,6 +188,8 @@ def delete_assert(form: dict):
 def flag_link(linkid: str, form: dict):
   assert form['category'] in ('law', 'policy')
   assert form['which'] and len(form['which']) < 1000
+  if not auth.submit_allowed():
+    flask.abort(403)
   flask.current_app.queries.flag_link(
     linkid=linkid,
     userid=flask.g.sesh['userid'],
