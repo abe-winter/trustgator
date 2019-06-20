@@ -28,7 +28,7 @@ def create_acct(form: dict, login_also=False) -> dict:
   if util.CONF['invites']['invite_only']:
     if not form['invite_code']:
       errors.append("the site is in invite_only mode, you need an invitation")
-  elif not CREATE_RATE.check():
+  elif not form['invite_code'] and not CREATE_RATE.check():
     errors.append('too many new accounts! sorry! try again later or ask a friend for an invite')
   if errors:
     # todo: stat
