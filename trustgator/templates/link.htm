@@ -4,7 +4,7 @@
 <div class="container">
   <h4>
     <a href="{{ link.url }}">{{ link.title }}</a>
-    <div class="h5 text-muted">{{ link.created[:16] }} - {{ link.url }}</div>
+    <div class="h5 text-muted">{{ link.created[:16] }} - posted by <a href="{{ url_for('get_pubuser', userid=link.userid) }}">{{ link.username }}</a> - {{ link.url }}</div>
   </h4>
   {% if deletable %}
   <form method="POST" action="/link/del">
