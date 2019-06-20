@@ -1,7 +1,7 @@
 import bcrypt, flask, psycopg2, sqlalchemy as sa, rapidjson, uuid, binascii, os
 from . import util, flaskhelp
 
-CREATE_RATE = util.RateLimiter('create_acct', max_per_minute=10)
+CREATE_RATE = util.RateLimiter('create_acct', max_per_minute=util.CONF['accts_per_minute'])
 
 def create_session(dets: dict):
   sessionid = uuid.uuid4()
@@ -29,7 +29,7 @@ def create_acct(form: dict, login_also=False) -> dict:
     if not form['invite_code']:
       errors.append("the site is in invite_only mode, you need an invitation")
   elif not CREATE_RATE.check():
-    errors.append('too many new accounts! sorry! try again later or get on the waitlist at <a href="/waitlist">waitlist</a> or ask a friend for an invite')
+    errors.append('too many new accounts! sorry! try again later or ask a friend for an invite')
   if errors:
     # todo: stat
     return {'sessionid': None, 'errors': errors}
