@@ -17,6 +17,7 @@ app.config.update(
 )
 
 @app.route('/beta-splash')
+@app.route('/')
 def splash():
   return flask.send_from_directory(app.static_folder, 'splash.htm')
 

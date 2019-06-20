@@ -8,6 +8,12 @@ There's a demo of this up at [trustgator.page](https://trustgator.page).
 
 The overall goal here is to understand how the people in your network view a particular piece of information, and to weight that by topic expertise.
 
+## Two-hop trust screenshot
+
+This is an example of the 'trust overlay', a view of an article's comment activity that contextualizes it in how you and your vouchees have vouched the commenters.
+
+![trust overlay screenshot](./logo/trust-overlay.png)
+
 ## Trust features
 
 ### Assertions
@@ -61,12 +67,6 @@ All 'suggestion' products are making a compromise between 'discovery' (access to
 Trustgator is an experiment to make that compromise more transparent by overlaying your trust network on the UX and explaining the origin of suggestions.
 
 My thesis is that people are dumb at evaluating the validity of blind recommendations but smart at understanding when questionable content all comes via a certain person.
-
-## Two-hop trust screenshot
-
-This is an example of the 'trust overlay', a view of an article's comment activity that contextualizes it in how you and your vouchees have vouched the commenters.
-
-![trust overlay screenshot](./logo/trust-overlay.png)
 
 ## Todo / help wanted
 
