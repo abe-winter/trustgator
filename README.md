@@ -76,6 +76,13 @@ My thesis is that people are dumb at evaluating the validity of blind recommenda
 * the helper functions / classes in util (Degraded class, cache\_wrapper decorator)
 * signup logic (esp invite code state space)
 * capability switches in auth.py (invite\_allowed / submit\_allowed)
+* network trust summing looks wrong (`link_overlay_2hop` query)
+
+### Missing core features
+
+* include topic-specific trust query on overlay.htm
+* trust snapshot on pubuser
+* better network exploration tools
 
 ### Design
 
